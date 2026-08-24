@@ -115,12 +115,20 @@ each item its own pass.
 
 ## Install
 
+**Claude Code, Codex, or any runtime with a skills directory** — symlink it into place:
+
 ```bash
 git clone <this repo> ~/src/analyzing-by-region
 ln -s ~/src/analyzing-by-region ~/.claude/skills/analyzing-by-region
 ```
 
-Claude Code picks up `SKILL.md` from any directory under `~/.claude/skills/`.
+Claude Code reads `~/.claude/skills/`, Codex reads `~/.codex/skills/`, and several
+runtimes also honour `~/.agents/skills/`. Symlinking the same directory into each keeps one
+copy to edit.
+
+**ChatGPT and anything else without a skills directory** — there is nothing to install;
+paste [`for-chatgpt.md`](for-chatgpt.md) into Custom Instructions, a Project's
+instructions, or a Custom GPT.
 
 ---
 
