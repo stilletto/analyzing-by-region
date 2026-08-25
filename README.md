@@ -17,54 +17,42 @@ Each task asks an open question — *what actually happens when this runs?* — 
 with many interacting parts. Answers are scored against a reference set of verified claims
 about that system: how much of what is true did the answer actually state.
 
+**Two numbers, and which one applies depends on who draws the regions.**
+
 | | code | prose plan | physical design | mean |
 |---|---|---|---|---|
-| one agent, one sweep | 0.51 | 0.35 | 0.52 | **0.46** |
-| one agent, region by region | 0.67 | 0.68 | 0.73 | **0.69** |
-| two agents, one region each | 0.87 | 0.62 | 0.85 | **0.78** |
+| one sweep, no method | 0.51 | 0.35 | 0.52 | **0.46** |
+| **skill used as-is**, agent picks its own regions | 0.56 | 0.47 | 0.59 | **0.54** |
+| regions supplied by someone who read the material | 0.67 | 0.68 | 0.73 | **0.69** |
 
-Cost of the instruction: **+24% tokens** on average (range +9% to +63%). It is the best
-coverage-per-token of every configuration tested.
+**+0.08 on its own; +0.23 when the regions are drawn by someone who understands the
+material.** Two thirds of the effect lives in the partition, not in the passes. Earlier
+versions of this README quoted only the 0.69 row, which overstated what the file does
+unaided; that is corrected here.
+
+Cost of the instruction: **+24% tokens** on average, and it is the best coverage-per-token
+of every configuration tested.
 
 ### It removes variance more than it raises the mean
 
 Bare agents scored 0.35–0.52 depending on which way they happened to come at the problem.
-The same agent given the instruction scored 0.67–0.73. **The floor moves much further than
-the ceiling** — what this buys is that the bad case stops being bad.
+The same agent given regions scored 0.67–0.73. **The floor moves much further than the
+ceiling** — what this buys is that the bad case stops being bad.
 
-Which gives a rule of thumb with real support behind it:
+### Closing the partition gap was attempted, five ways, and failed
 
-> **Benefit ≈ 0.66 − whatever the agent manages on its own.**
-> Measured: bare 0.35 → gain +0.33. Bare 0.52 → gain +0.21. Bare 1.00 → gain 0.00.
+Inventory-and-deal; cut where couplings are thinnest; read fully first then verify the cut
+against three concrete failures; make two different cuts and run both; derive regions from
+kinds of bad outcome. At six repetitions per condition none moved the result beyond noise
+(best was +0.02 against a 0.054 threshold). The reports were read afterwards to confirm
+the instructions had been followed — they had. See `step1-trials/` and `EVIDENCE.md`.
 
-### Against turning the model's effort up instead
+### A bigger lever, not yet exploited
 
-On one task, with a 112-claim reference set, at two different reasoning-effort settings:
-
-```
-bare, effort xhigh      0.41          the instruction   +0.18
-bare, effort max        0.40          one effort step   -0.01
-region by region, xhigh 0.58
-region by region, max   0.58     <-- replicated to two decimals
-```
-
-Both purchases cost about the same in tokens.
-
-### How many agents to spend
-
-Marginal return on upgrading from one bare agent:
-
-| upgrade | +coverage | +tokens | coverage per 100k spent |
-|---|---|---|---|
-| **one agent, region by region** | **+0.18** | **+35k** | **0.51** |
-| two agents, one region each | +0.21 | +76k | 0.27 |
-| two agents, no seeding | +0.09 | +56k | 0.17 |
-| four agents, one region each | +0.22 | +182k | 0.12 |
-
-One agent following the instruction matched **four** free-running agents at 41% of the
-cost. Splitting into four regions instead of two bought **+0.01** for double the money.
-
----
+Across 18 runs of one task, report length varied 2.8x and correlated with coverage at
+r = 0.54; the short half averaged 0.57, the long half 0.63. That is a larger difference
+than any partitioning rewrite produced. Whether making an agent write longer *causes*
+better coverage, or merely accompanies it, is untested.
 
 ## What does not work
 
