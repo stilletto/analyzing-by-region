@@ -7,7 +7,12 @@ Not "review this system" — "you own only the locking and the two mutexes; be e
 there and ignore everything else; go deeper than you normally would." Then the next region.
 
 That instruction, given to one agent with no fan-out, raised coverage of what is true
-about a system from **0.46 to 0.69** across code, a prose plan and a physical design.
+about a system from **0.46 to 0.54** across code, a prose plan and a physical design —
+**0.69** when a person who had read the material drew the regions.
+
+Then running the *whole analysis a second time* and merging the two reports raised it
+further, by more than any refinement of a single run ever did: **0.60 to 0.70** on a
+physical design, **0.46 to 0.62** on a prose plan.
 
 ---
 
@@ -39,20 +44,54 @@ Bare agents scored 0.35–0.52 depending on which way they happened to come at t
 The same agent given regions scored 0.67–0.73. **The floor moves much further than the
 ceiling** — what this buys is that the bad case stops being bad.
 
-### Closing the partition gap was attempted, five ways, and failed
+### Closing the partition gap was attempted, six ways, and failed
 
 Inventory-and-deal; cut where couplings are thinnest; read fully first then verify the cut
 against three concrete failures; make two different cuts and run both; derive regions from
-kinds of bad outcome. At six repetitions per condition none moved the result beyond noise
-(best was +0.02 against a 0.054 threshold). The reports were read afterwards to confirm
-the instructions had been followed — they had. See `step1-trials/` and `EVIDENCE.md`.
+kinds of bad outcome; expand each region into a named list and refuse to end the pass until
+every item is worked through. At six repetitions per condition none moved the result beyond
+noise (best was +0.02 against a 0.054 threshold). The reports were read afterwards to
+confirm the instructions had been followed — they had. See `step1-trials/`.
 
-### A bigger lever, not yet exploited
+### What the partition actually does is arrive from outside
 
-Across 18 runs of one task, report length varied 2.8x and correlated with coverage at
-r = 0.54; the short half averaged 0.57, the long half 0.63. That is a larger difference
-than any partitioning rewrite produced. Whether making an agent write longer *causes*
-better coverage, or merely accompanies it, is untested.
+Two supplied partitions with different wording produce the same length and the same
+coverage. Six self-cut instructions as different from each other as "cut where couplings
+are thinnest" and "derive regions from kinds of bad outcome" produce the same length as
+each other **and as having no step 1 at all** — 6,000 to 6,200 words, every one, against
+9,000 for a supplied partition.
+
+An agent that draws its own regions draws them at the granularity of the effort it had
+already decided to spend. A partition that arrives from outside is a contract it did not
+negotiate. Restating a self-authored partition does not substitute; that was tested
+directly and failed.
+
+Paying a *separate agent* to draw the regions reproduces the effect (0.667 against 0.598)
+and costs exactly what it gains — a cutter plus two workers reached 0.787 for 192k tokens,
+three plain runs reached 0.784 for 195k. Region-drawing is not where extra budget belongs.
+
+### The lever that does work: run it all again and merge
+
+| | physical design | prose plan |
+|---|---|---|
+| one run | 0.598 | 0.457 |
+| two runs merged | **0.702** | **0.619** |
+| regions supplied by hand, one run | 0.680 | 0.680 |
+
+Two merged runs beat a human-drawn partition on one task and nearly reach it on the other.
+The runs are independent full analyses, each choosing its own regions — this is
+replication, not one agent per region.
+
+**The merge is its own step and its wording decides whether it works.** Told that "length
+is not a concern, loss is", the merge loses almost nothing against a perfect union computed
+from the judges' own verdicts: **-0.027** and **-0.007**. Every merged report came out
+longer than its two inputs combined. A merge that comes out shorter has compressed, and
+compression here is loss.
+
+Four runs of the rewritten skill with no budget specified diverged by themselves — one did
+a single pass, two spawned a second run and merged, one spawned three — and every one
+landed above the old file's cost curve, including 0.613 at the old file's own cost.
+Numbers and caveats in [`evidence/results/run-twice-and-merge.md`](evidence/results/run-twice-and-merge.md).
 
 ## What does not work
 
@@ -122,8 +161,11 @@ instructions, or a Custom GPT.
 
 ## Limits of the evidence
 
-- Five measurements across four tasks, plus one saturated benchmark. Two repetitions per
-  condition on the single-agent arms, one on the fan-out arm.
+- Measurements across four tasks, plus three saturated benchmarks. Two to six repetitions
+  per condition; the merge result rests on three pairs per task and the rewritten file on
+  four runs of one task.
+- Run-to-run spread within a single condition reaches 0.15. Anything below about 0.05 on
+  two repetitions is noise.
 - Claude Opus 5 only.
 - Domains: code, prose planning, physical design. Mathematics is **untested** — nothing
   here says anything about it.

@@ -1,6 +1,6 @@
 ---
 name: analyzing-by-region
-description: Use before analysing anything whose parts interact and which is too big to cover well in one sweep — code or a subsystem, a plan or migration, a design, a control system or robot behaviour, game rules or an economy, a protocol, a data pipeline, a contract, someone else's system. Triggers: being asked what happens when this runs, whether it will work, how it fails, what could go wrong, what players or users will actually do, or for a review or audit; a problem that splits into cases; noticing a first pass came out as a shallow balanced overview, or that you are summarising breadth-first instead of going deep anywhere. Also whenever several agents are about to be pointed at one question, when deciding how many to spawn, or when tempted to give them roles or personas.
+description: Use before analysing anything whose parts interact and which is too big to cover well in one sweep — code or a subsystem, a plan or migration, a design, a control system or robot behaviour, game rules or an economy, a protocol, a data pipeline, a contract, someone else's system. Triggers: being asked what happens when this runs, whether it will work, how it fails, what could go wrong, what players or users will actually do, or for a review or audit; a problem that splits into cases; wanting as complete an account as the budget allows; noticing a first pass came out as a shallow balanced overview, or that you are summarising breadth-first instead of going deep anywhere. Also whenever several agents are about to be pointed at one question, when deciding how many to spawn, or when tempted to give them roles or personas.
 ---
 
 # Analyzing by Region
@@ -45,14 +45,36 @@ the conclusion. Nothing that owns a single region can see these.
 **5. Union, then dedupe. Never vote.** Majority rule deletes the finding that only one pass
 reached, and that finding is the point.
 
-## Spawning agents instead
+## When coverage matters more than tokens: run it all again and merge
 
-Doing the passes yourself captures most of the benefit far more cheaply. Spawn one agent
-per region only when the material will not fit one context, or wall-clock beats tokens —
-and only when the seams are **real**, read off the material rather than invented. On
-invented seams a fan-out loses to one agent doing both passes: the consequences run across
-the regions, and separate contexts cannot join the ends. Give each agent the framing above;
-do steps 4 and 5 yourself.
+Polishing one run has a low ceiling. Running the **entire** analysis a second time in a
+clean context, letting that run choose its own regions, and merging the two gains far more
+than any refinement of a single run. Two independent runs disagree about where to go deep;
+the merge keeps both.
+
+**The merge is its own step and its wording decides whether it works.** Give a fresh agent
+both reports and this instruction:
+
+> Nothing is lost: every distinct finding in either report must appear, mechanism and
+> consequence intact. Same point in both — state it once. Disagreement — keep both readings
+> and say they disagree. Do not summarise, do not compress, do not drop a finding for
+> seeming minor. Length is not a concern, loss is.
+
+Without "length is not a concern, loss is" a merge compresses, and compression is loss.
+The merged report should come out **longer than both inputs together**; if it is shorter it
+summarised, and the run is wasted.
+
+Costs about 3.5x one run. A third run keeps adding, with diminishing returns.
+
+**Do not spend an agent on choosing the regions for another agent.** Measured: it works and
+it costs exactly what it gains. Spend those tokens on another full run.
+
+## One agent per region
+
+Only when the material will not fit one context, or wall-clock beats tokens — and only when
+the seams are **real**, read off the material rather than invented. On invented seams a
+per-region fan-out loses to one context doing both passes: consequences run across the
+regions and separate contexts cannot join the ends. Do steps 4 and 5 yourself.
 
 ## Mistakes
 
@@ -65,6 +87,8 @@ do steps 4 and 5 yourself.
 | A gap between regions | Assign every cross-cutting concern to one owner |
 | Voting on findings | Union and dedupe |
 | Passes that still summarise everything | "Go deeper on yours than you normally would" |
+| Spending the extra budget on a better cut | Spend it on another full run and a merge |
+| A merge that reads shorter than its inputs | It compressed. Re-merge with "length is not a concern, loss is" |
 | One batched answer for many items — blows output limits | Give each item its own pass |
 
 Measured effect and limits: `EVIDENCE.md`.

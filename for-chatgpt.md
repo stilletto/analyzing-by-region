@@ -32,6 +32,21 @@ of nothing. Instead:
 4. **Combine by union, not by vote.** Keep everything each pass found. In a search,
    majority rule deletes the one real finding that only one pass reached.
 
+5. **When coverage matters more than effort, do the whole thing again and merge.** Not a
+   revision of the first answer — the entire analysis a second time, from scratch, letting
+   the second run choose its own regions, then merge the two. This gains more than any
+   improvement to a single run. In ChatGPT that means a **fresh conversation** for the
+   second run, then a third for the merge; a re-run inside the same conversation is not
+   independent and is untested. The merge instruction that works:
+
+   > *Nothing is lost: every distinct finding in either report must appear, mechanism and
+   > consequence intact. Same point in both — state it once. Disagreement — keep both
+   > readings and say they disagree. Do not summarise, do not compress, do not drop a
+   > finding for seeming minor. Length is not a concern, loss is.*
+
+   Without that last clause the merge compresses, and compression is loss. Expect the
+   merged answer to be longer than both inputs together; if it is shorter, it summarised.
+
 Two things not to do, both measured to backfire:
 
 - **Do not use roles or perspectives to vary the passes** — "as a security engineer", "as
@@ -51,6 +66,9 @@ correct answer. It buys nothing there and costs about a quarter more output.
 
 **Where the numbers come from.** Measured across code, a prose plan and a physical design,
 scored on how much of what is verifiably true about each system the answer actually stated:
-one sweep 0.46, region by region 0.69, at +24% tokens. It removes variance more than it
-raises the mean — one-sweep answers ranged 0.35–0.52, region-by-region answers 0.67–0.73.
+one sweep 0.46; region by region 0.54 when the assistant picks its own regions, 0.69 when a
+person who had read the material supplies them; at +24% tokens. It removes variance more
+than it raises the mean — one-sweep answers ranged 0.35–0.52, region-by-region 0.67–0.73.
+Step 5 is the largest single gain measured: 0.60 to 0.70 on a physical design and 0.46 to
+0.62 on a prose plan, at roughly 3.5x the effort.
 Full evidence, including what failed: https://github.com/stilletto/analyzing-by-region
