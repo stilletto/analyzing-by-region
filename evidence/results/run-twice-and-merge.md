@@ -104,3 +104,19 @@ against 0.702 for 215k, because the parent does not re-read the material for eac
 Two tasks (physical design, prose plan). Three merge pairs each. Four runs of the rewritten
 file on one task. Claude Opus 5 only. Run-to-run spread within a condition reaches 0.15,
 so single runs are not informative on their own.
+
+## Trimming the rewritten file: no loss
+
+Cut from 984 words to 798 — three mistakes-table rows that restated steps 1, 3 and 5, the
+trigger list, and prose throughout. Four runs each, budget unspecified:
+
+    798 words              984 words
+     66k    0.667           65k    0.613
+     72k    0.667          130k    0.733
+    143k    0.800           97k    0.787
+    190k    0.853          207k    0.840
+    mean 0.747 @ 118k      mean 0.743 @ 125k
+
+At least as good at every cost point. The single-pass runs scored 0.667 twice against 0.613
+for the longer file and 0.598 before the rewrite — but on two runs against one, with 0.054
+sitting on the noise threshold, so "no loss" is established and "better" is not.

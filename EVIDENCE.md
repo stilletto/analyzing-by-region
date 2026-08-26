@@ -164,6 +164,28 @@ cutter costs is the whole difference. Against the alternative use of those token
 flat: a cutter plus two workers reached 0.787 for 192k, three plain runs reached 0.784 for
 195k. Region-drawing is not where extra budget belongs.
 
+## Trimming again, after the rewrite: no loss
+
+The rewritten file was cut from 984 words to 798 — three rows of the mistakes table that
+restated steps 1, 3 and 5, the trigger list, and prose throughout. Four runs on the physical
+design, budget unspecified, against the four runs of the 984-word version:
+
+    798 words              984 words
+     66k    0.667           65k    0.613
+     72k    0.667          130k    0.733
+    143k    0.800           97k    0.787
+    190k    0.853          207k    0.840
+    mean 0.747 @ 118k      mean 0.743 @ 125k
+
+At every cost point the shorter file is at least as good. The single-pass runs scored 0.667
+twice, against 0.613 for the longer file and 0.598 for the pre-rewrite file — but that is
+two runs against one, and 0.054 sits exactly on the noise threshold, so "no loss" is
+established and "better" is not.
+
+One deliberate removal to watch: the ownership framing lost the sentence "I will not spend
+a line on them". The prohibition it intensifies is measured as load-bearing; the intensifier
+is not, and these runs did not miss it.
+
 ## Trimming this file: half the size, not free
 
 The file was cut from 1,578 words to 732 by moving the evidence out. Measured both ways,
