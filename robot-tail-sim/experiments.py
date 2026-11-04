@@ -20,7 +20,7 @@ def run_case(case):
     """case: dict with keys variant, servo (dict for ServoSpec.scaled), gait (dict), sim (dict), push list."""
     v = VARIANTS[case["variant"]]
     tail = None if v["tail"] is None else dict(v["tail"], **case.get("tail", {}))
-    r = Robot(tail)
+    r = Robot(tail, battery=case.get("battery"))
     gait = dict(case.get("gait", {}))
     if tail is not None:
         gait.setdefault("t_start", 4.5)

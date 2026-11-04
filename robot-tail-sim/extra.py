@@ -25,6 +25,17 @@ def cases():
         gg = dict(g, step_len=0.30, T_ss=0.5, T_ds=0.15)
         out.append(dict(exp="fast", variant=vn, gait=gg, sim=dict(sm, stab_k=k),
                         servo=dict(latency=lat), push=STD_PUSH if pn == "push" else [], pname=pn, x=lat))
+    # 4. per-joint torque limit (absolute N*m), others at full; with pushes
+    base = [200, 250, 250, 180, 120]
+    grid = {0: [60, 45, 35, 25], 1: [100, 80, 60, 45, 35], 2: [100, 80, 60, 45, 35],
+            3: [72, 55, 40, 30], 4: [48, 30, 20, 12]}
+    for (vn, g, sm), k in itertools.product(V, [0.5, 1.0]):
+        for j, vals in grid.items():
+            for val in vals:
+                mult = [1.0] * 5
+                mult[j] = val / base[j]
+                out.append(dict(exp="joint_torque", variant=vn, gait=dict(g), sim=dict(sm, stab_k=k),
+                                servo=dict(torque=mult, latency=0.005), push=STD_PUSH, pname="push", x=val, joint=j))
     return out
 
 

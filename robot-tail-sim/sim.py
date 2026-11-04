@@ -34,7 +34,7 @@ class ServoSpec:
         self.kd = np.array(kd if kd is not None else [60, 60, 60, 60, 40], float)
 
     def scaled(self, name=None, torque=1.0, speed=1.0, latency=None, t_motor=None):
-        s = ServoSpec(name or self.name, self.tau_max * torque, self.w_max * speed,
+        s = ServoSpec(name or self.name, self.tau_max * np.asarray(torque, float), self.w_max * speed,
                       self.latency if latency is None else latency,
                       self.t_motor if t_motor is None else t_motor, self.kp, self.kd)
         return s
@@ -62,9 +62,9 @@ class ServoBank:
 
 # ----------------------------------------------------------------------------- robot
 class Robot:
-    def __init__(self, tail=None, armature=0.12):
+    def __init__(self, tail=None, armature=0.12, battery=None):
         self.tail_cfg = tail
-        self.m, self.xml = build(tail, armature=armature)
+        self.m, self.xml = build(tail, armature=armature, battery=battery)
         m = self.m
         self.has_tail = tail is not None
         self.leg_names = [f"{s}_{j}" for s in SIDES for j in LEG_JOINTS]

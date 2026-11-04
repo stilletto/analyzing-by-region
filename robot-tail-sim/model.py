@@ -136,13 +136,21 @@ def tail_xml(t):
     return "\n".join(parts)
 
 
-def build_xml(tail=None, armature=0.05, joint_damping=0.5, z0=0.95):
-    """tail: None (biped) or dict overriding DEFAULT_TAIL."""
+def build_xml(tail=None, armature=0.05, joint_damping=0.5, z0=0.95, battery=None):
+    """tail: None (biped) or dict overriding DEFAULT_TAIL.
+    battery: None or (mass_kg, x, z) - that much trunk mass moved into a box on the pelvis."""
     t = None
     if tail is not None:
         t = dict(DEFAULT_TAIL)
         t.update(tail)
     pelvis_mass = M_PELVIS + (t["base_mass"] if t else 0.0)
+    trunk_mass = M_TRUNK
+    battery_geom = ""
+    if battery:
+        bm, bx, bz = battery
+        trunk_mass -= bm
+        battery_geom = (f'<geom name="battery" type="box" pos="{bx} 0 {bz}" size="0.06 0.12 0.08" '
+                        f'mass="{bm}" rgba=".25 .25 .28 1"/>')
     legs = "\n".join(leg_xml(s) for s in SIDES)
     tailx = tail_xml(t) if t else ""
     motors = "\n".join(
@@ -186,7 +194,8 @@ def build_xml(tail=None, armature=0.05, joint_damping=0.5, z0=0.95):
     <body name="pelvis" pos="0 0 {z0}">
       <freejoint name="root"/>
       <geom name="pelvis" type="box" size="0.08 0.14 0.06" mass="{pelvis_mass:.4f}" rgba=".35 .45 .6 1"/>
-      <geom name="trunk" type="box" pos="0 0 0.30" size="0.10 0.16 0.22" mass="{M_TRUNK:.4f}" rgba=".35 .45 .6 1"/>
+      <geom name="trunk" type="box" pos="0 0 0.30" size="0.10 0.16 0.22" mass="{trunk_mass:.4f}" rgba=".35 .45 .6 1"/>
+      {battery_geom}
       <geom name="head" type="sphere" pos="0 0 0.66" size="0.10" mass="{M_HEAD:.4f}" rgba=".9 .8 .7 1"/>
       <geom name="larm" type="capsule" fromto="0 0.21 0.48 0 0.23 -0.08" size="0.04" mass="{M_ARM:.4f}" rgba=".55 .6 .7 1"/>
       <geom name="rarm" type="capsule" fromto="0 -0.21 0.48 0 -0.23 -0.08" size="0.04" mass="{M_ARM:.4f}" rgba=".55 .6 .7 1"/>

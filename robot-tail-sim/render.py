@@ -57,12 +57,12 @@ def render_frames(r, frames, pushes, w=640, h=480, label="", fps=30, t_offset=0.
         img = Image.fromarray(ren.render())
         dr = ImageDraw.Draw(img)
         dr.text((12, 10), label, fill=(20, 20, 30), font=font)
-        dr.text((12, 38), "t = %.1f s" % t, fill=(40, 40, 60), font=fsmall)
+        dr.text((12, 38), "t = %.1f с" % t, fill=(40, 40, 60), font=fsmall)
         for (tp, dur, F) in pushes:
             if tp <= t < tp + dur + 0.25:
-                dr.text((12, 60), "PUSH %s N" % np.round(F).astype(int).tolist(), fill=(200, 30, 30), font=font)
+                dr.text((12, 60), "ТОЛЧОК %s Н" % np.round(F).astype(int).tolist(), fill=(200, 30, 30), font=font)
         if d.qpos[2] < 0.45 or d.xmat[r.pelvis].reshape(3, 3)[2, 2] < 0.6:
-            dr.text((w // 2 - 60, h // 2 - 20), "FALL", fill=(200, 30, 30), font=_font(40))
+            dr.text((w // 2 - 90, h // 2 - 20), "ПАДЕНИЕ", fill=(200, 30, 30), font=_font(40))
         imgs.append(np.asarray(img))
     ren.close()
     return imgs
