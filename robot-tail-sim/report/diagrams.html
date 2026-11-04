@@ -1,0 +1,118 @@
+<figure class="fig" id="fig-mech">
+  <svg viewBox="0 0 680 300" role="img" aria-label="Хвост сбоку: звенья на шарнирах, пружины сверху сворачивают хвост, трос снизу через блоки убывающего радиуса распрямляет его до упора, лебёдка в тазу, колесо на конце опирается о пол">
+    <defs>
+      <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+      </marker>
+      <marker id="arrT" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0 0 L10 5 L0 10 z" style="fill:var(--tail)"/>
+      </marker>
+    </defs>
+    <!-- floor -->
+    <line x1="20" y1="262" x2="660" y2="262" stroke="currentColor" stroke-width="1.5"/>
+    <g stroke="currentColor" stroke-width="1" opacity=".35">
+      <line x1="40" y1="262" x2="30" y2="272"/><line x1="100" y1="262" x2="90" y2="272"/><line x1="160" y1="262" x2="150" y2="272"/>
+      <line x1="220" y1="262" x2="210" y2="272"/><line x1="280" y1="262" x2="270" y2="272"/><line x1="340" y1="262" x2="330" y2="272"/>
+      <line x1="400" y1="262" x2="390" y2="272"/><line x1="460" y1="262" x2="450" y2="272"/><line x1="520" y1="262" x2="510" y2="272"/>
+      <line x1="580" y1="262" x2="570" y2="272"/><line x1="640" y1="262" x2="630" y2="272"/>
+    </g>
+    <!-- pelvis + leg stub (robot faces right? no: robot faces LEFT, tail goes right/back) -->
+    <rect x="40" y="38" width="96" height="64" rx="6" stroke="currentColor" stroke-width="1.5" style="fill:var(--panel)"/>
+    <text x="88" y="62" text-anchor="middle" class="t">таз</text>
+    <line x1="74" y1="102" x2="60" y2="180" stroke="currentColor" stroke-width="8" stroke-linecap="round" opacity=".5"/>
+    <line x1="60" y1="180" x2="70" y2="250" stroke="currentColor" stroke-width="7" stroke-linecap="round" opacity=".5"/>
+    <rect x="44" y="250" width="56" height="12" rx="2" fill="currentColor" opacity=".5"/>
+    <text x="60" y="290" text-anchor="middle" class="s">стопа</text>
+    <!-- winch -->
+    <circle cx="118" cy="84" r="11" fill="none" stroke-width="2" style="stroke:var(--tail)"/>
+    <circle cx="118" cy="84" r="3" style="fill:var(--tail)"/>
+    <text x="88" y="24" text-anchor="middle" class="s">лебёдка — 1 привод</text>
+    <line x1="104" y1="28" x2="114" y2="70" stroke="currentColor" stroke-width="1" marker-end="url(#arr)"/>
+    <!-- tail segments: joints J0..J4, tip -->
+    <g stroke-width="7" stroke-linecap="round" fill="none" style="stroke:var(--tail)">
+      <polyline points="140,96 204,148 262,190 328,222 398,242 474,247"/>
+    </g>
+    <g stroke-width="2" style="fill:var(--bg);stroke:var(--tail)">
+      <circle cx="140" cy="96" r="6"/><circle cx="204" cy="148" r="6"/><circle cx="262" cy="190" r="6"/>
+      <circle cx="328" cy="222" r="6"/><circle cx="398" cy="242" r="6"/>
+    </g>
+    <!-- pulleys under hinges, radius shrinking toward the tip -->
+    <g fill="none" stroke="currentColor" stroke-width="1.2">
+      <circle cx="132" cy="112" r="10"/><circle cx="196" cy="162" r="8"/><circle cx="256" cy="202" r="6"/>
+      <circle cx="324" cy="232" r="4.5"/><circle cx="396" cy="250" r="3"/>
+    </g>
+    <!-- cable: winch -> under pulleys -> anchored at tip -->
+    <polyline points="118,95 124,121 188,169 252,207 321,236 394,253 470,254" fill="none" stroke="currentColor" stroke-width="1.4" stroke-dasharray="5 3"/>
+    <!-- springs on top side (zigzag) -->
+    <g fill="none" stroke="currentColor" stroke-width="1.2">
+      <polyline points="160,100 166,94 172,104 178,96 184,110 190,104"/>
+      <polyline points="222,150 228,145 234,156 240,150 246,162 252,158"/>
+      <polyline points="284,186 290,182 296,194 302,190 308,202 314,200"/>
+      <polyline points="350,214 356,211 362,222 368,219 374,230 380,228"/>
+    </g>
+    <!-- wheel -->
+    <circle cx="474" cy="248" r="14" stroke="currentColor" stroke-width="2" style="fill:var(--panel)"/>
+    <circle cx="474" cy="248" r="3" fill="currentColor"/>
+    <!-- ground force -->
+    <line x1="474" y1="300" x2="474" y2="268" stroke-width="2.5" marker-end="url(#arrT)" style="stroke:var(--tail)"/>
+    <text x="486" y="292" class="s">N ≈ 12–17 % веса</text>
+    <!-- lever arm dimension: hip to wheel -->
+    <line x1="74" y1="140" x2="474" y2="140" stroke="currentColor" stroke-width="1" stroke-dasharray="2 3" opacity=".7"/>
+    <line x1="74" y1="134" x2="74" y2="146" stroke="currentColor"/><line x1="474" y1="134" x2="474" y2="146" stroke="currentColor"/>
+    <text x="400" y="132" text-anchor="middle" class="s">плечо 0,9–1 м до бедра</text>
+    <!-- callouts -->
+    <text x="530" y="182" class="t">пружины сверху</text>
+    <text x="530" y="198" class="s">сворачивают хвост вверх</text>
+    <line x1="526" y1="186" x2="384" y2="222" stroke="currentColor" stroke-width="1" marker-end="url(#arr)"/>
+    <text x="530" y="226" class="t">трос снизу</text>
+    <text x="530" y="242" class="s">плечо 10 → 3 см: распрямляет</text>
+    <line x1="526" y1="230" x2="420" y2="252" stroke="currentColor" stroke-width="1" marker-end="url(#arr)"/>
+    <text x="530" y="56" class="t">упор в каждом шарнире</text>
+    <text x="530" y="72" class="s">прямее прямого не гнётся</text>
+    <line x1="526" y1="62" x2="210" y2="142" stroke="currentColor" stroke-width="1" marker-end="url(#arr)"/>
+  </svg>
+  <figcaption>Механизм хвоста в модели. Пружины тянут хвост свернуться, трос с одной лебёдкой распрямляет его до упора. Чем сильнее лебёдка выбирает трос, тем больше веса хвост берёт на себя. Плечо троса у корня 10 см, к кончику 3 см: корневой шарнир несёт самый большой момент. С одинаковым плечом 4,5 см хвост складывался под нагрузкой.</figcaption>
+</figure>
+
+<figure class="fig" id="fig-poly">
+  <svg viewBox="0 0 680 270" role="img" aria-label="Вид сверху на опору на одной ноге. С одним колесом опорный треугольник не захватывает среднюю линию, центр масс должен уйти к стопе. С двумя колёсами на оси 44 см опорная область перекрывает среднюю линию">
+    <!-- panel titles -->
+    <text x="170" y="22" text-anchor="middle" class="t">B1: одно колесо</text>
+    <text x="510" y="22" text-anchor="middle" class="t">B2: два колеса, колея 44 см</text>
+    <!-- axis: x forward is UP in these panels; y lateral is horizontal. scale 1 m = 200 px -->
+    <!-- B1 panel -->
+    <g transform="translate(170,0)">
+      <line x1="0" y1="34" x2="0" y2="252" stroke="currentColor" stroke-width="1" stroke-dasharray="3 4" opacity=".5"/>
+      <text x="4" y="46" class="s">ось робота</text>
+      <!-- support hull: stance foot (left foot) + one wheel at centre -->
+      <polygon points="8,48 28,48 28,100 0,236" fill-opacity=".14" stroke-width="1.2" style="fill:var(--tail);stroke:var(--tail)"/>
+      <!-- stance foot -->
+      <rect x="8" y="48" width="20" height="52" rx="3" fill="currentColor" opacity=".55"/>
+      <text x="34" y="74" class="s">опорная стопа</text>
+      <!-- swing foot outline -->
+      <rect x="-28" y="78" width="20" height="52" rx="3" fill="none" stroke="currentColor" stroke-dasharray="3 3" opacity=".6"/>
+      <text x="-34" y="142" text-anchor="end" class="s">переносимая</text>
+      <!-- wheel -->
+      <rect x="-4" y="228" width="8" height="18" rx="2" fill="currentColor"/>
+      <!-- COM marker on centreline -->
+      <circle cx="0" cy="130" r="6" stroke-width="2" style="fill:var(--bg);stroke:var(--bad)"/>
+      <text x="-12" y="176" text-anchor="end" class="s">центр масс на оси</text>
+      <text x="-12" y="190" text-anchor="end" class="s" style="fill:var(--bad)">вне опоры</text>
+    </g>
+    <!-- B2 panel -->
+    <g transform="translate(510,0)">
+      <line x1="0" y1="34" x2="0" y2="252" stroke="currentColor" stroke-width="1" stroke-dasharray="3 4" opacity=".5"/>
+      <polygon points="8,48 28,48 44,237 -44,237" fill-opacity=".14" stroke-width="1.2" style="fill:var(--tail);stroke:var(--tail)"/>
+      <rect x="8" y="48" width="20" height="52" rx="3" fill="currentColor" opacity=".55"/>
+      <rect x="-28" y="78" width="20" height="52" rx="3" fill="none" stroke="currentColor" stroke-dasharray="3 3" opacity=".6"/>
+      <line x1="-44" y1="237" x2="44" y2="237" stroke="currentColor" stroke-width="3"/>
+      <rect x="-48" y="228" width="8" height="18" rx="2" fill="currentColor"/>
+      <rect x="40" y="228" width="8" height="18" rx="2" fill="currentColor"/>
+      <circle cx="0" cy="130" r="6" stroke-width="2" style="fill:var(--bg);stroke:var(--good)"/>
+      <text x="-12" y="176" text-anchor="end" class="s">центр масс на оси</text>
+      <text x="-12" y="190" text-anchor="end" class="s" style="fill:var(--good)">внутри опоры</text>
+      <text x="0" y="262" text-anchor="middle" class="s">ось колёс 44 см</text>
+    </g>
+  </svg>
+  <figcaption>Вид сверху, вперёд — вверх, одна нога в воздухе. Опорная область — выпуклая оболочка опорной стопы и точек касания хвоста. С одним колесом на оси робота хвост ничего не даёт вбок: центр масс всё равно должен качаться к стопе, как у двуногого. Колёса на оси 44 см захватывают среднюю линию, и раскачка почти не нужна, если хвост несёт достаточно веса.</figcaption>
+</figure>
