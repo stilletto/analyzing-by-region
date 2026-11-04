@@ -28,8 +28,9 @@ def key_of(c):
 
 LABELS = {
     "A_biped": "A: biped",
-    "B1_tail_narrow@10cm": "B1: tail, one wheel",
+    "B1_tail_narrow@10cm": "B1: tail, one wheel (COM 10 cm back)",
     "B2_tail_wide@10cm": "B2: tail, two wheels (COM 10 cm back)",
+    "B1_tail_narrow@15cm": "B1: tail, one wheel (COM 15 cm back)",
     "B2_tail_wide@15cm": "B2: tail, two wheels (COM 15 cm back)",
 }
 
@@ -39,8 +40,41 @@ def pick(req_peak, req_rms, req_w):
     return min(ok, key=lambda a: a[4]) if ok else None
 
 
-def main(path="results/sweeps.json", out="results/summary.json"):
-    R = json.load(open(path))
+def load(paths=("results/sweeps.json", "results/extra2.json", "results/extra.json")):
+    R = []
+    for p in paths:
+        try:
+            R += json.load(open(p))
+        except FileNotFoundError:
+            pass
+    return R
+
+
+def joint_minima(R, keys):
+    """Per joint: smallest tested torque limit (N*m) such that it and every larger tested limit passed with pushes."""
+    out = {}
+    for k in keys:
+        rows = [c for c in R if c["exp"] == "joint_torque" and key_of(c) == k]
+        if not rows:
+            continue
+        res = []
+        for j in range(5):
+            d = defaultdict(bool)
+            for c in rows:
+                if c["joint"] == j:
+                    d[c["x"]] |= not c["fell"]
+            best = None
+            for x in sorted(d, reverse=True):
+                if not d[x]:
+                    break
+                best = x
+            res.append(dict(joint=JOINTS[j], min=best, tested=sorted(d.items())))
+        out[k] = res
+    return out
+
+
+def main(path=None, out="results/summary.json"):
+    R = load() if path is None else json.load(open(path))
     by = defaultdict(list)
     for c in R:
         by[(c["exp"], key_of(c))].append(c)
@@ -112,26 +146,26 @@ def main(path="results/sweeps.json", out="results/summary.json"):
                           tail_share=c.get("tail_share"), winch_F_peak=c.get("winch_F_peak"), mass=c["mass"])
     S["nominal"] = nom
 
-    # requirements under pushes at the smallest torque scale that still passes, then actuator pick
+    # requirements: per-joint minimum torque limit (with pushes) + RMS/speed from the full-torque pushed run
+    jm = joint_minima(R, keys)
+    S["joint_min"] = jm
     req = {}
     for k in keys:
-        rows = [c for c in by[("torque", k)] if c["pname"] == "push" and not c["fell"]]
+        rows = [c for c in by[("torque", k)] if c["pname"] == "push" and not c["fell"] and c["x"] == 1.0]
         if not rows:
             continue
-        smin = min(c["x"] for c in rows)
-        best = min([c for c in rows if c["x"] == smin], key=lambda c: sum(c["rms_tau"]))
-        # also the full-torque pushed run (unconstrained demand)
-        full = [c for c in rows if c["x"] == 1.0]
-        full = min(full, key=lambda c: sum(c["rms_tau"])) if full else best
+        full = min(rows, key=lambda c: sum(c["rms_tau"]))
         joints = []
         total = 0
         for j in range(5):
-            pk, rm, w = best["peak_tau"][j], best["rms_tau"][j], max(best["peak_w"][j], full["peak_w"][j])
-            a = pick(pk, rm, w)
-            joints.append(dict(joint=JOINTS[j], peak=pk, rms=rm, w=w, full_peak=full["peak_tau"][j],
+            mn = jm.get(k, [{}] * 5)[j].get("min")
+            need = mn if mn is not None else full["peak_tau"][j]
+            rm, w = full["rms_tau"][j], full["peak_w"][j]
+            a = pick(need, rm, w)
+            joints.append(dict(joint=JOINTS[j], need_peak=need, full_peak=full["peak_tau"][j], rms=rm, w=w,
                                pick=a[0] if a else None, price=a[4] if a else None))
             total += 2 * (a[4] if a else np.nan)
-        req[k] = dict(torque_scale=smin, joints=joints, legs_cost=total)
+        req[k] = dict(joints=joints, legs_cost=total)
     S["requirements"] = req
     json.dump(S, open(out, "w"), indent=1, default=float)
     return S
@@ -154,9 +188,9 @@ def show(S):
               "w", np.round(v["peak_w"], 1), "tail", v["tail_share"])
     print("\n== actuator pick (pushes, smallest passing torque scale) ==")
     for k, v in S["requirements"].items():
-        print(f"  {LABELS[k]} (torque scale {v['torque_scale']}) legs = ${v['legs_cost']:.0f}")
+        print(f"  {LABELS[k]} legs = ${v['legs_cost']:.0f}")
         for j in v["joints"]:
-            print(f"     {j['joint']:12s} peak {j['peak']:6.1f} rms {j['rms']:5.1f} w {j['w']:4.1f} -> {j['pick']} ${j['price']}")
+            print(f"     {j['joint']:12s} need {j['need_peak']:6.1f} (full-run peak {j['full_peak']:6.1f}) rms {j['rms']:5.1f} w {j['w']:4.1f} -> {j['pick']} ${j['price']}")
 
 
 if __name__ == "__main__":

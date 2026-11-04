@@ -1,14 +1,16 @@
 {
  "labels": {
   "A_biped": "A: biped",
-  "B1_tail_narrow@10cm": "B1: tail, one wheel",
+  "B1_tail_narrow@10cm": "B1: tail, one wheel (COM 10 cm back)",
   "B2_tail_wide@10cm": "B2: tail, two wheels (COM 10 cm back)",
+  "B1_tail_narrow@15cm": "B1: tail, one wheel (COM 15 cm back)",
   "B2_tail_wide@15cm": "B2: tail, two wheels (COM 15 cm back)"
  },
  "keys": [
   "A_biped",
   "B1_tail_narrow@10cm",
   "B2_tail_wide@10cm",
+  "B1_tail_narrow@15cm",
   "B2_tail_wide@15cm"
  ],
  "latency": {
@@ -270,6 +272,92 @@
     ]
    ]
   },
+  "B1_tail_narrow@15cm": {
+   "none": [
+    [
+     0.002,
+     true
+    ],
+    [
+     0.01,
+     true
+    ],
+    [
+     0.02,
+     true
+    ],
+    [
+     0.03,
+     true
+    ],
+    [
+     0.04,
+     true
+    ],
+    [
+     0.06,
+     true
+    ],
+    [
+     0.08,
+     true
+    ],
+    [
+     0.1,
+     true
+    ],
+    [
+     0.15,
+     true
+    ],
+    [
+     0.2,
+     true
+    ]
+   ],
+   "push": [
+    [
+     0.002,
+     true
+    ],
+    [
+     0.01,
+     true
+    ],
+    [
+     0.02,
+     true
+    ],
+    [
+     0.03,
+     true
+    ],
+    [
+     0.04,
+     true
+    ],
+    [
+     0.06,
+     true
+    ],
+    [
+     0.08,
+     true
+    ],
+    [
+     0.1,
+     true
+    ],
+    [
+     0.15,
+     false
+    ],
+    [
+     0.2,
+     false
+    ]
+   ]
+  },
   "B2_tail_wide@15cm": {
    "none": [
     [
@@ -370,6 +458,10 @@
    "none": 0.08,
    "push": 0.06
   },
+  "B1_tail_narrow@15cm": {
+   "none": 0.2,
+   "push": 0.1
+  },
   "B2_tail_wide@15cm": {
    "none": 0.2,
    "push": 0.2
@@ -408,6 +500,20 @@
    "fwd": {
     "5": 60,
     "40": 60
+   },
+   "back": {
+    "5": 60,
+    "40": 60
+   },
+   "side": {
+    "5": 10,
+    "40": 10
+   }
+  },
+  "B1_tail_narrow@15cm": {
+   "fwd": {
+    "5": 60,
+    "40": 50
    },
    "back": {
     "5": 60,
@@ -614,6 +720,33 @@
       0.25,
       false
      ],
+     [
+      0.3,
+      false
+     ],
+     [
+      0.4,
+      true
+     ],
+     [
+      0.5,
+      true
+     ],
+     [
+      0.7,
+      true
+     ],
+     [
+      1.0,
+      true
+     ]
+    ],
+    "min": 0.4
+   }
+  },
+  "B1_tail_narrow@15cm": {
+   "push": {
+    "curve": [
      [
       0.3,
       false
@@ -888,6 +1021,7 @@
     "min": 0.1
    }
   },
+  "B1_tail_narrow@15cm": {},
   "B2_tail_wide@15cm": {
    "none": {
     "curve": [
@@ -1028,6 +1162,32 @@
    "winch_F_peak": 1750.3869404075776,
    "mass": 73.8
   },
+  "B1_tail_narrow@15cm": {
+   "peak_tau": [
+    61.55630073236048,
+    155.0492043394746,
+    60.63581550131365,
+    168.80770929552182,
+    85.30897751209005
+   ],
+   "rms_tau": [
+    20.28844163742935,
+    51.85060617545675,
+    32.40236944724001,
+    20.06817050798435,
+    6.353917922564961
+   ],
+   "peak_w": [
+    0.6503317730138185,
+    2.0331010676109718,
+    3.8188398382153044,
+    2.7559167273556207,
+    2.016960730940191
+   ],
+   "tail_share": 0.17083438244431656,
+   "winch_F_peak": 1537.6219992648403,
+   "mass": 73.8
+  },
   "B2_tail_wide@15cm": {
    "peak_tau": [
     40.12311239563087,
@@ -1055,210 +1215,257 @@
    "mass": 73.8
   }
  },
+ "joint_min": {},
  "requirements": {
   "A_biped": {
-   "torque_scale": 0.4,
    "joints": [
     {
      "joint": "hip_roll",
-     "peak": 80.0,
-     "rms": 31.523866986940295,
-     "w": 0.8780102393417681,
+     "need_peak": 72.44769173791788,
      "full_peak": 72.44769173791788,
+     "rms": 29.64268469916264,
+     "w": 0.5580645921048516,
      "pick": "RobStride 04",
      "price": 307
     },
     {
      "joint": "hip_pitch",
-     "peak": 98.51780887115042,
-     "rms": 30.826425756667334,
-     "w": 2.9013613347112455,
+     "need_peak": 68.93732466852916,
      "full_peak": 68.93732466852916,
-     "pick": "Leadshine HJ2-110 (harmonic)",
-     "price": 859
+     "rms": 22.48880299573847,
+     "w": 2.6029908765733816,
+     "pick": "RobStride 04",
+     "price": 307
     },
     {
      "joint": "knee",
-     "peak": 100.0,
-     "rms": 62.203558654852415,
-     "w": 2.7243303318590892,
+     "need_peak": 156.0723902010437,
      "full_peak": 156.0723902010437,
-     "pick": "Leadshine HJ2-110 (harmonic)",
-     "price": 859
+     "rms": 65.6654381877219,
+     "w": 2.1942051212321143,
+     "pick": "MyActuator X12-P20-320",
+     "price": 1370
     },
     {
      "joint": "ankle_pitch",
-     "peak": 72.0,
-     "rms": 27.59161932518322,
-     "w": 2.8009032350375316,
+     "need_peak": 89.53294283320146,
      "full_peak": 89.53294283320146,
+     "rms": 25.68564976546385,
+     "w": 2.390902475359508,
      "pick": "RobStride 04",
      "price": 307
     },
     {
      "joint": "ankle_roll",
-     "peak": 47.740155443057155,
-     "rms": 12.171744378256934,
-     "w": 0.7918130754305251,
+     "need_peak": 34.61264701863435,
      "full_peak": 34.61264701863435,
+     "rms": 14.264285551579386,
+     "w": 0.487316110044138,
      "pick": "RobStride 03",
      "price": 235
     }
    ],
-   "legs_cost": 5134
+   "legs_cost": 5052
   },
   "B1_tail_narrow@10cm": {
-   "torque_scale": 0.4,
    "joints": [
     {
      "joint": "hip_roll",
-     "peak": 79.63397219249397,
-     "rms": 24.505899427008437,
-     "w": 0.8566596508342116,
+     "need_peak": 83.15632468262791,
      "full_peak": 83.15632468262791,
+     "rms": 23.24748077792938,
+     "w": 0.8566596508342116,
      "pick": "RobStride 04",
      "price": 307
     },
     {
      "joint": "hip_pitch",
-     "peak": 100.0,
-     "rms": 42.20200823237005,
-     "w": 2.3062285980125594,
+     "need_peak": 133.847255950978,
      "full_peak": 133.847255950978,
+     "rms": 41.15488927598129,
+     "w": 2.3062285980125594,
      "pick": "Leadshine HJ2-110 (harmonic)",
      "price": 859
     },
     {
      "joint": "knee",
-     "peak": 99.50909126001932,
-     "rms": 44.025422235094034,
-     "w": 3.0659819010170595,
+     "need_peak": 158.57285543493396,
      "full_peak": 158.57285543493396,
-     "pick": "Leadshine HJ2-110 (harmonic)",
-     "price": 859
+     "rms": 43.84061582583139,
+     "w": 3.0659819010170595,
+     "pick": "MyActuator X12-P20-320",
+     "price": 1370
     },
     {
      "joint": "ankle_pitch",
-     "peak": 72.0,
-     "rms": 14.72525159323172,
-     "w": 2.919294422199931,
+     "need_peak": 89.85339442803237,
      "full_peak": 89.85339442803237,
+     "rms": 13.124473579214568,
+     "w": 2.7837296056664087,
      "pick": "RobStride 04",
      "price": 307
     },
     {
      "joint": "ankle_roll",
-     "peak": 48.0,
-     "rms": 8.663127340239717,
-     "w": 1.7971624416308472,
+     "need_peak": 66.17445983232662,
      "full_peak": 66.17445983232662,
-     "pick": "RobStride 03",
-     "price": 235
-    }
-   ],
-   "legs_cost": 5134
-  },
-  "B2_tail_wide@10cm": {
-   "torque_scale": 0.4,
-   "joints": [
-    {
-     "joint": "hip_roll",
-     "peak": 69.3193273249767,
-     "rms": 14.802055712452953,
-     "w": 0.8124234376918769,
-     "full_peak": 63.03674871140542,
-     "pick": "RobStride 04",
-     "price": 307
-    },
-    {
-     "joint": "hip_pitch",
-     "peak": 100.0,
-     "rms": 45.72424938047059,
-     "w": 2.5997630093304602,
-     "full_peak": 130.69129769811727,
-     "pick": "Leadshine HJ2-110 (harmonic)",
-     "price": 859
-    },
-    {
-     "joint": "knee",
-     "peak": 100.0,
-     "rms": 43.70094320137971,
-     "w": 3.428284630255694,
-     "full_peak": 202.15709831827513,
-     "pick": "MyActuator X12-P20-320",
-     "price": 1370
-    },
-    {
-     "joint": "ankle_pitch",
-     "peak": 72.0,
-     "rms": 17.625309174030136,
-     "w": 3.628931906784623,
-     "full_peak": 135.6348289032481,
-     "pick": "RobStride 04",
-     "price": 307
-    },
-    {
-     "joint": "ankle_roll",
-     "peak": 48.0,
-     "rms": 12.226233206226967,
-     "w": 1.5385508958487781,
-     "full_peak": 76.45614313305407,
-     "pick": "RobStride 03",
-     "price": 235
-    }
-   ],
-   "legs_cost": 6156
-  },
-  "B2_tail_wide@15cm": {
-   "torque_scale": 0.5,
-   "joints": [
-    {
-     "joint": "hip_roll",
-     "peak": 60.73882470806858,
-     "rms": 16.182357744566104,
-     "w": 0.46658723666395946,
-     "full_peak": 43.391983377322866,
-     "pick": "RobStride 04",
-     "price": 307
-    },
-    {
-     "joint": "hip_pitch",
-     "peak": 125.0,
-     "rms": 64.38168321673618,
-     "w": 2.074962357901362,
-     "full_peak": 182.99523497938702,
-     "pick": "Leadshine HJ2-110 (harmonic)",
-     "price": 859
-    },
-    {
-     "joint": "knee",
-     "peak": 116.76446279163004,
-     "rms": 34.04107770800777,
-     "w": 4.036842236638806,
-     "full_peak": 125.95705804007073,
-     "pick": "MyActuator X12-P20-320",
-     "price": 1370
-    },
-    {
-     "joint": "ankle_pitch",
-     "peak": 90.0,
-     "rms": 18.890410443112767,
-     "w": 2.8815597074373716,
-     "full_peak": 180.0,
-     "pick": "RobStride 04",
-     "price": 307
-    },
-    {
-     "joint": "ankle_roll",
-     "peak": 60.0,
-     "rms": 11.589529744948532,
-     "w": 2.420446806915436,
-     "full_peak": 96.27683671270768,
+     "rms": 8.955072416552683,
+     "w": 1.5752442913103,
      "pick": "RobStride 04",
      "price": 307
     }
    ],
    "legs_cost": 6300
+  },
+  "B2_tail_wide@10cm": {
+   "joints": [
+    {
+     "joint": "hip_roll",
+     "need_peak": 63.03674871140542,
+     "full_peak": 63.03674871140542,
+     "rms": 15.458301775464042,
+     "w": 0.8124234376918769,
+     "pick": "RobStride 04",
+     "price": 307
+    },
+    {
+     "joint": "hip_pitch",
+     "need_peak": 130.69129769811727,
+     "full_peak": 130.69129769811727,
+     "rms": 46.747694143954,
+     "w": 2.5997630093304602,
+     "pick": "Leadshine HJ2-110 (harmonic)",
+     "price": 859
+    },
+    {
+     "joint": "knee",
+     "need_peak": 202.15709831827513,
+     "full_peak": 202.15709831827513,
+     "rms": 42.84749635594116,
+     "w": 3.428284630255694,
+     "pick": "MyActuator X12-P20-320",
+     "price": 1370
+    },
+    {
+     "joint": "ankle_pitch",
+     "need_peak": 135.6348289032481,
+     "full_peak": 135.6348289032481,
+     "rms": 16.701735064189478,
+     "w": 3.561774446492994,
+     "pick": "MyActuator X12-P20-320",
+     "price": 1370
+    },
+    {
+     "joint": "ankle_roll",
+     "need_peak": 76.45614313305407,
+     "full_peak": 76.45614313305407,
+     "rms": 12.189573637527834,
+     "w": 1.490895120026555,
+     "pick": "RobStride 04",
+     "price": 307
+    }
+   ],
+   "legs_cost": 8426
+  },
+  "B1_tail_narrow@15cm": {
+   "joints": [
+    {
+     "joint": "hip_roll",
+     "need_peak": 67.28028585439912,
+     "full_peak": 67.28028585439912,
+     "rms": 20.325173948622087,
+     "w": 0.8339375533362512,
+     "pick": "RobStride 04",
+     "price": 307
+    },
+    {
+     "joint": "hip_pitch",
+     "need_peak": 160.05607030526127,
+     "full_peak": 160.05607030526127,
+     "rms": 52.8077675046151,
+     "w": 2.0903953905081574,
+     "pick": "MyActuator X12-P20-320",
+     "price": 1370
+    },
+    {
+     "joint": "knee",
+     "need_peak": 140.34810788080762,
+     "full_peak": 140.34810788080762,
+     "rms": 32.8970985744349,
+     "w": 3.877527539409684,
+     "pick": "MyActuator X12-P20-320",
+     "price": 1370
+    },
+    {
+     "joint": "ankle_pitch",
+     "need_peak": 180.0,
+     "full_peak": 180.0,
+     "rms": 20.81420854305867,
+     "w": 2.8332975104595413,
+     "pick": "MyActuator X12-P20-320",
+     "price": 1370
+    },
+    {
+     "joint": "ankle_roll",
+     "need_peak": 100.86319618187775,
+     "full_peak": 100.86319618187775,
+     "rms": 7.272072424841417,
+     "w": 2.3959819937789715,
+     "pick": "Leadshine HJ2-110 (harmonic)",
+     "price": 859
+    }
+   ],
+   "legs_cost": 10552
+  },
+  "B2_tail_wide@15cm": {
+   "joints": [
+    {
+     "joint": "hip_roll",
+     "need_peak": 43.391983377322866,
+     "full_peak": 43.391983377322866,
+     "rms": 10.932307966390795,
+     "w": 0.45106596153596235,
+     "pick": "RobStride 03",
+     "price": 235
+    },
+    {
+     "joint": "hip_pitch",
+     "need_peak": 182.99523497938702,
+     "full_peak": 182.99523497938702,
+     "rms": 66.55708457993003,
+     "w": 2.074962357901362,
+     "pick": "MyActuator X12-P20-320",
+     "price": 1370
+    },
+    {
+     "joint": "knee",
+     "need_peak": 125.95705804007073,
+     "full_peak": 125.95705804007073,
+     "rms": 33.45792108901806,
+     "w": 4.036842236638806,
+     "pick": "MyActuator X12-P20-320",
+     "price": 1370
+    },
+    {
+     "joint": "ankle_pitch",
+     "need_peak": 180.0,
+     "full_peak": 180.0,
+     "rms": 19.57546577198688,
+     "w": 2.849752385087875,
+     "pick": "MyActuator X12-P20-320",
+     "price": 1370
+    },
+    {
+     "joint": "ankle_roll",
+     "need_peak": 96.27683671270768,
+     "full_peak": 96.27683671270768,
+     "rms": 11.1825022591451,
+     "w": 1.9228164480795935,
+     "pick": "Leadshine HJ2-110 (harmonic)",
+     "price": 859
+    }
+   ],
+   "legs_cost": 10408
   }
  }
 }
