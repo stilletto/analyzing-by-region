@@ -7,7 +7,7 @@
 :root {
   --bg: #f4f5f2; --panel: #fcfcfb; --fg: #16181b; --muted: #5b5f63; --faint: #8a8d8f; --rule: #dcdfd8;
   --tail: #d2591f; --good: #0b8f0b; --bad: #c9302f;
-  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100;
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100; --s5: #e87ba4;
   --grid: #e3e4de; --axis: #c3c2b7;
   --f-display: "Unbounded", "Golos Text", system-ui, sans-serif;
   --f-body: "Golos Text", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -17,11 +17,11 @@
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
   --bg: #111315; --panel: #1a1b1a; --fg: #eceee9; --muted: #a9aca6; --faint: #7f827d; --rule: #2d302d;
   --tail: #f0824e; --good: #19b319; --bad: #e66767;
-  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --grid: #2a2b29; --axis: #3a3b38; color-scheme: dark } }
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --grid: #2a2b29; --axis: #3a3b38; color-scheme: dark } }
 :root[data-theme="dark"] {
   --bg: #111315; --panel: #1a1b1a; --fg: #eceee9; --muted: #a9aca6; --faint: #7f827d; --rule: #2d302d;
   --tail: #f0824e; --good: #19b319; --bad: #e66767;
-  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --grid: #2a2b29; --axis: #3a3b38; color-scheme: dark }
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --grid: #2a2b29; --axis: #3a3b38; color-scheme: dark }
 body { background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 16px; line-height: 1.55;
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 64px; }
 main { display: grid; gap: 0; justify-items: center; }
@@ -66,7 +66,10 @@ td.n, th.n { text-align: right; }
 .legend span { display: inline-flex; align-items: center; gap: 6px; }
 .legend i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
 .tip { position: fixed; pointer-events: none; background: var(--fg); color: var(--bg); font-size: 12.5px; padding: 6px 9px; border-radius: 6px; max-width: 260px; z-index: 20; line-height: 1.35; }
-.chart { position: relative; }
+.chart { position: relative; overflow-x: auto; }
+.chart svg { min-width: 720px; }
+.scroll { overflow-x: auto; }
+.scroll svg { min-width: 620px; }
 .design { display: grid; gap: 12px; margin-top: 8px; }
 .design > div { display: grid; grid-template-columns: 9.5rem 1fr; gap: 12px; border-top: 1px solid var(--rule); padding-top: 10px; }
 .design b { font-weight: 700; }
@@ -90,7 +93,7 @@ footer { margin-top: 48px; border-top: 1px solid var(--rule); padding-top: 14px;
 <section class="wide">
   <h2>Одинаковые сервы, одинаковые толчки</h2>
   <figure class="fig">
-    <video src="{{VIDEO}}" controls muted playsinline loop preload="metadata"></video>
+    <video src="{{VIDEO}}" poster="poster.jpg" controls muted playsinline loop preload="metadata"></video>
     <figcaption>{{VIDEO_CAPTION}}</figcaption>
   </figure>
 </section>
@@ -208,7 +211,7 @@ footer { margin-top: 48px; border-top: 1px solid var(--rule); padding-top: 14px;
   (function () {
     const host = document.getElementById('ch-lat');
     const lats = D.lat_axis; const rowsPer = [['none', 'без толчков'], ['push', 'с толчками']];
-    const W = 920, left = 250, top = 34, rowH = 26, gap = 10, colW = (W - left - 10) / lats.length;
+    const W = 920, left = 330, top = 34, rowH = 26, gap = 10, colW = (W - left - 10) / lats.length;
     const H = top + KEYS.length * (rowH * 2 + gap) + 8;
     const s = svgRoot(host, W, H, 'Устоял ли робот при каждой задержке серв, по вариантам');
     txt(s, left - 10, 18, 'задержка, мс →', 's', 'end', { fill: 'var(--muted)', style: 'font-size:12px' });

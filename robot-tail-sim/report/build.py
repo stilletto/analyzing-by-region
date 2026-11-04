@@ -9,9 +9,10 @@ ROOT = os.path.dirname(HERE)
 
 SHORT = {
     "A_biped": "A — двуногий",
-    "B1_tail_narrow@10cm": "B1 — хвост, 1 колесо",
-    "B2_tail_wide@10cm": "B2 — хвост, 2 колеса, ЦМ −10 см",
-    "B2_tail_wide@15cm": "B2 — хвост, 2 колеса, ЦМ −15 см",
+    "B1_tail_narrow@10cm": "B1 — 1 колесо, ЦМ −10 см",
+    "B2_tail_wide@10cm": "B2 — 2 колеса, ЦМ −10 см",
+    "B1_tail_narrow@15cm": "B1 — 1 колесо, ЦМ −15 см",
+    "B2_tail_wide@15cm": "B2 — 2 колеса, ЦМ −15 см",
 }
 JOINTS_RU = ["бедро вбок", "бедро вперёд", "колено", "голеностоп вперёд", "голеностоп вбок"]
 
@@ -29,8 +30,11 @@ def torque_table(R, keys):
 
 
 def build(content):
-    S = summarize(os.path.join(ROOT, "results/sweeps.json"), os.path.join(ROOT, "results/summary.json"))
-    R = json.load(open(os.path.join(ROOT, "results/sweeps.json")))
+    from analyze import load
+    cwd = os.getcwd(); os.chdir(ROOT)
+    S = summarize(None, "results/summary.json")
+    R = load()
+    os.chdir(cwd)
     keys = S["keys"]
     lat_axis = sorted({x for k in keys for p in S["latency"][k].values() for x, _ in p})
     data = dict(keys=keys, short=SHORT, lat_axis=lat_axis, latency=S["latency"],
@@ -43,7 +47,8 @@ def build(content):
     rep["DATA"] = json.dumps(data, ensure_ascii=False, default=float).replace("</", "<\\/")
     for k, v in rep.items():
         tpl = tpl.replace("{{" + k + "}}", v)
-    missing = [s for s in ["{{"] if s in tpl]
+    import re
+    missing = re.findall(r"\{\{[A-Z_]+\}\}", tpl)
     out = os.path.join(HERE, "index.html")
     open(out, "w").write(tpl)
     return out, S, data, missing

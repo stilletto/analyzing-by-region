@@ -1,0 +1,564 @@
+<title>Хвост-опора для гуманоида</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;700&family=Unbounded:wght@500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one reading column (~68ch) with figures breaking out wider; engineering report, data first. */
+:root {
+  --bg: #f4f5f2; --panel: #fcfcfb; --fg: #16181b; --muted: #5b5f63; --faint: #8a8d8f; --rule: #dcdfd8;
+  --tail: #d2591f; --good: #0b8f0b; --bad: #c9302f;
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100; --s5: #e87ba4;
+  --grid: #e3e4de; --axis: #c3c2b7;
+  --f-display: "Unbounded", "Golos Text", system-ui, sans-serif;
+  --f-body: "Golos Text", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --col: 44rem; --wide: 60rem;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #111315; --panel: #1a1b1a; --fg: #eceee9; --muted: #a9aca6; --faint: #7f827d; --rule: #2d302d;
+  --tail: #f0824e; --good: #19b319; --bad: #e66767;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --grid: #2a2b29; --axis: #3a3b38; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #111315; --panel: #1a1b1a; --fg: #eceee9; --muted: #a9aca6; --faint: #7f827d; --rule: #2d302d;
+  --tail: #f0824e; --good: #19b319; --bad: #e66767;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --grid: #2a2b29; --axis: #3a3b38; color-scheme: dark }
+body { background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 16px; line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 64px; }
+main { display: grid; gap: 0; justify-items: center; }
+main > * { width: 100%; max-width: var(--col); min-width: 0; }
+main > .wide { max-width: var(--wide); }
+header.top { padding-block: 40px 8px; display: grid; gap: 10px; }
+.eyebrow { font-family: var(--f-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+h1 { font-family: var(--f-display); font-weight: 700; font-size: clamp(28px, 5vw, 44px); line-height: 1.1; margin: 0; text-wrap: balance; letter-spacing: -.01em; }
+h1 .tl { color: var(--tail); }
+.lede { font-size: 18px; color: var(--muted); max-width: 40rem; margin: 0; }
+h2 { font-family: var(--f-display); font-weight: 500; font-size: 22px; line-height: 1.25; margin: 48px 0 10px; text-wrap: balance; }
+h3 { font-size: 16px; font-weight: 700; margin: 24px 0 6px; }
+p { margin: 0 0 12px; }
+.muted { color: var(--muted); }
+.mono, code { font-family: var(--f-mono); font-size: .9em; }
+.answer { border-top: 2px solid var(--fg); border-bottom: 1px solid var(--rule); padding-block: 18px 6px; margin-top: 22px; display: grid; gap: 14px; }
+.answer ol { margin: 0; padding-left: 1.3em; display: grid; gap: 10px; }
+.answer li::marker { font-family: var(--f-mono); color: var(--muted); }
+.verdict { font-weight: 700; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 18px 0 4px; }
+.stat { background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; padding: 12px 14px; display: grid; gap: 2px; }
+.stat .v { font-family: var(--f-display); font-size: 26px; font-weight: 500; line-height: 1.1; }
+.stat .k { font-size: 13px; color: var(--muted); }
+.fig { margin: 18px 0 6px; display: grid; gap: 8px; }
+.fig svg { width: 100%; height: auto; color: var(--fg); display: block; }
+.fig svg text { fill: currentColor; font-family: var(--f-body); }
+.fig svg text.t { font-size: 13px; font-weight: 700; }
+.fig svg text.s { font-size: 11.5px; }
+.fig figcaption { font-size: 14px; color: var(--muted); max-width: var(--col); }
+.panel { background: var(--panel); border: 1px solid var(--rule); border-radius: 10px; padding: 14px; }
+video { width: 100%; height: auto; border-radius: 8px; display: block; background: #000; aspect-ratio: 1120 / 420; max-width: 100%; }
+.tbl { overflow-x: auto; margin: 10px 0 4px; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 7px 10px 7px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font-weight: 500; color: var(--muted); font-size: 12.5px; }
+td.n, th.n { text-align: right; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+.chip { font: 500 13px var(--f-body); border: 1px solid var(--rule); background: var(--panel); color: var(--fg); border-radius: 999px; padding: 5px 12px; cursor: pointer; }
+.chip[aria-pressed="true"] { border-color: var(--fg); background: var(--fg); color: var(--bg); }
+.chip:focus-visible { outline: 2px solid var(--s1); outline-offset: 2px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--muted); margin: 4px 0 2px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+.tip { position: fixed; pointer-events: none; background: var(--fg); color: var(--bg); font-size: 12.5px; padding: 6px 9px; border-radius: 6px; max-width: 260px; z-index: 20; line-height: 1.35; }
+.chart { position: relative; overflow-x: auto; }
+.chart svg { min-width: 720px; }
+.scroll { overflow-x: auto; }
+.scroll svg { min-width: 620px; }
+.design { display: grid; gap: 12px; margin-top: 8px; }
+.design > div { display: grid; grid-template-columns: 9.5rem 1fr; gap: 12px; border-top: 1px solid var(--rule); padding-top: 10px; }
+.design b { font-weight: 700; }
+@media (max-width: 560px) { .design > div { grid-template-columns: 1fr; gap: 2px; } }
+ul.plain { margin: 0 0 12px; padding-left: 1.1em; display: grid; gap: 6px; }
+footer { margin-top: 48px; border-top: 1px solid var(--rule); padding-top: 14px; font-size: 13px; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+
+<main>
+<header class="top">
+  <div class="eyebrow">Симуляция MuJoCo · гуманоид 1,75 м / 70 кг · ходьба 0,31 м/с</div>
+  <h1>Хвост-опора вместо <span class="tl">быстрых серв</span></h1>
+  <p class="lede">Можно ли, добавив хвост, поставить в ноги более медленные и дешёвые сервы? Двуногий робот и тот же робот с хвостом шли с одинаковыми сервами под одинаковыми толчками, а параметры серв постепенно ухудшались.</p>
+</header>
+
+<section class="answer" aria-label="Короткий ответ">
+  
+<p class="verdict">Хвост сильно снижает требования к скорости реакции серв, но почти не удешевляет сами сервы.</p>
+<div class="stats">
+  <div class="stat"><span class="v">30 → 200 мс</span><span class="k">допустимая задержка серв при толчках, двуногий → хвост</span></div>
+  <div class="stat"><span class="v">20 → 60 Н·с</span><span class="k">толчок вперёд, который робот выдерживает (60 — потолок теста)</span></div>
+  <div class="stat"><span class="v">10 Н·с</span><span class="k">толчок вбок: одинаково с хвостом и без</span></div>
+  <div class="stat"><span class="v">≈ $4,6–5,9 тыс.</span><span class="k">приводы ног у всех вариантов; у двуногого $4,7 тыс.</span></div>
+</div>
+<ol>
+  <li><b>Скорость реакции — да, в разы.</b> При толчках двуногий держится, пока полная задержка «датчик → контроллер → серва»
+  не больше 30 мс. Вариант с хвостом на двух колёсах и центром масс на 15 см позади стоп выдержал все проверенные задержки
+  до 200 мс, даже совсем без стабилизатора: он статически устойчив. На сервах «бюджетного» класса (6 рад/с, половина момента,
+  запаздывание момента 5 мс) варианты B1 с ЦМ −10 см и B2 с ЦМ −15 см ходят с толчками при задержке 80 мс, а двуногий падает уже при 20–40 мс.</li>
+  <li><b>Толчки вперёд и назад — втрое лучше, вбок — без изменений.</b> Хвост работает в продольной плоскости.
+  Боковой толчок 20 Н·с роняет все варианты. Двуногий падает от бокового толчка в одной из фаз шага даже на лучших сервах:
+  ему нужен шаг-подстраховка, а не более быстрые сервы.</li>
+  <li><b>Момент перераспределяется.</b> Голеностопу вперёд и бедру вбок нужно в 2–2,5 раза меньше момента, колену — на четверть
+  меньше (90 против 125 Н·м), а бедру вперёд — в 1,5–2 раза больше (90–130 против 60 Н·м). Сумма пиковых моментов на ногу
+  260–300 Н·м против 375 Н·м у двуногого.</li>
+  <li><b>Скорость серв при медленной ходьбе не важна никому.</b> При 0,31 м/с все варианты идут даже на сервах с 2 рад/с.
+  При 0,46 м/с с хвостом допустима задержка 40 мс с толчками, двуногому нужно 5 мс.</li>
+  <li><b>Число серв.</b> Хвост добавляет один привод, лебёдку на 2–3 кН. С хвостом робот ходит по ровному полу и с пассивным
+  голеностопом вбок на пружине (минус 2 сервы), а двуногий так не ходит совсем. Но под толчками это ненадёжно.</li>
+  <li><b>Деньги — примерно поровну.</b> Цена привода растёт с моментом, а не со скоростью реакции: дешёвые приводы
+  на CAN за $2,5–4 за Н·м и так отвечают за миллисекунды. Экономия от хвоста в другом: можно взять медленный контроллер
+  без жёсткого реального времени, мириться с задержками шины и редукторов и меньше падать.</li>
+</ol>
+
+</section>
+
+<section class="wide">
+  <h2>Одинаковые сервы, одинаковые толчки</h2>
+  <figure class="fig">
+    <video src="biped_vs_tail_40ms.mp4" poster="poster.jpg" controls muted playsinline loop preload="metadata"></video>
+    <figcaption>Оба робота ходят на одинаковых сервах с задержкой реакции 40 мс. Каждого толкают дважды: вперёд 12 Н·с и вбок 10 Н·с. Двуногий падает после первого толчка. Робот с хвостом держит центр масс на 15 см позади стоп, хвост несёт 17% веса, и робот доходит до конца. Первые 4,5 секунды хвост выпускается лебёдкой и вес переносится назад; двуногий в это время просто стоит.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>Что моделировалось</h2>
+  <p><b>Робот.</b> Пропорции и массы сегментов взяты из антропометрических таблиц Винтера: рост 1,75 м, масса 70 кг. В каждой ноге 5 приводов: бедро вбок и вперёд, колено, голеностоп вперёд и вбок. Корпус, голова и руки — одно жёсткое тело. Хвост весит 3,8 кг вместе с лебёдкой, эта масса учтена.</p>
+  <p><b>Серва.</b> У каждой сервы есть внутренний ПД-регулятор положения, запаздывание момента, характеристика момент–скорость электромотора (на полной скорости момент падает до нуля) и приведённая инерция редуктора 0,12 кг·м². «Задержка реакции» — полный путь: датчики → контроллер → команда серве.</p>
+  <p><b>Управление одинаковое для всех вариантов.</b> Походку планирует ZMP preview control на модели перевёрнутого маятника. Обратная кинематика всего тела превращает её в углы суставов. Стабилизатор по capture point сдвигает центр масс, если робот отклонился от плана. Отличие у хвостового робота одно: точка нулевого момента может уходить в область между стопами и колёсами хвоста. Шаг 25 см, шаг за 0,8 с, без перестановки ног при толчках.</p>
+</section>
+
+<section class="wide">
+  <figure class="fig" id="fig-mech">
+  <div class="scroll"><svg viewBox="0 0 760 300" role="img" aria-label="Хвост сбоку: звенья на шарнирах, пружины сверху сворачивают хвост, трос снизу через блоки убывающего радиуса распрямляет его до упора, лебёдка в тазу, колесо на конце опирается о пол">
+    <defs>
+      <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+      </marker>
+      <marker id="arrT" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0 0 L10 5 L0 10 z" style="fill:var(--tail)"/>
+      </marker>
+    </defs>
+    <!-- floor -->
+    <line x1="20" y1="262" x2="660" y2="262" stroke="currentColor" stroke-width="1.5"/>
+    <g stroke="currentColor" stroke-width="1" opacity=".35">
+      <line x1="40" y1="262" x2="30" y2="272"/><line x1="100" y1="262" x2="90" y2="272"/><line x1="160" y1="262" x2="150" y2="272"/>
+      <line x1="220" y1="262" x2="210" y2="272"/><line x1="280" y1="262" x2="270" y2="272"/><line x1="340" y1="262" x2="330" y2="272"/>
+      <line x1="400" y1="262" x2="390" y2="272"/><line x1="460" y1="262" x2="450" y2="272"/><line x1="520" y1="262" x2="510" y2="272"/>
+      <line x1="580" y1="262" x2="570" y2="272"/><line x1="640" y1="262" x2="630" y2="272"/>
+    </g>
+    <!-- pelvis + leg stub (robot faces right? no: robot faces LEFT, tail goes right/back) -->
+    <rect x="40" y="38" width="96" height="64" rx="6" stroke="currentColor" stroke-width="1.5" style="fill:var(--panel)"/>
+    <text x="88" y="62" text-anchor="middle" class="t">таз</text>
+    <line x1="74" y1="102" x2="60" y2="180" stroke="currentColor" stroke-width="8" stroke-linecap="round" opacity=".5"/>
+    <line x1="60" y1="180" x2="70" y2="250" stroke="currentColor" stroke-width="7" stroke-linecap="round" opacity=".5"/>
+    <rect x="44" y="250" width="56" height="12" rx="2" fill="currentColor" opacity=".5"/>
+    <text x="60" y="290" text-anchor="middle" class="s">стопа</text>
+    <!-- winch -->
+    <circle cx="118" cy="84" r="11" fill="none" stroke-width="2" style="stroke:var(--tail)"/>
+    <circle cx="118" cy="84" r="3" style="fill:var(--tail)"/>
+    <text x="88" y="24" text-anchor="middle" class="s">лебёдка — 1 привод</text>
+    <line x1="104" y1="28" x2="114" y2="70" stroke="currentColor" stroke-width="1" marker-end="url(#arr)"/>
+    <!-- tail segments: joints J0..J4, tip -->
+    <g stroke-width="7" stroke-linecap="round" fill="none" style="stroke:var(--tail)">
+      <polyline points="140,96 204,148 262,190 328,222 398,242 474,247"/>
+    </g>
+    <g stroke-width="2" style="fill:var(--bg);stroke:var(--tail)">
+      <circle cx="140" cy="96" r="6"/><circle cx="204" cy="148" r="6"/><circle cx="262" cy="190" r="6"/>
+      <circle cx="328" cy="222" r="6"/><circle cx="398" cy="242" r="6"/>
+    </g>
+    <!-- pulleys under hinges, radius shrinking toward the tip -->
+    <g fill="none" stroke="currentColor" stroke-width="1.2">
+      <circle cx="132" cy="112" r="10"/><circle cx="196" cy="162" r="8"/><circle cx="256" cy="202" r="6"/>
+      <circle cx="324" cy="232" r="4.5"/><circle cx="396" cy="250" r="3"/>
+    </g>
+    <!-- cable: winch -> under pulleys -> anchored at tip -->
+    <polyline points="118,95 124,121 188,169 252,207 321,236 394,253 470,254" fill="none" stroke="currentColor" stroke-width="1.4" stroke-dasharray="5 3"/>
+    <!-- springs on top side (zigzag) -->
+    <g fill="none" stroke="currentColor" stroke-width="1.2">
+      <polyline points="160,100 166,94 172,104 178,96 184,110 190,104"/>
+      <polyline points="222,150 228,145 234,156 240,150 246,162 252,158"/>
+      <polyline points="284,186 290,182 296,194 302,190 308,202 314,200"/>
+      <polyline points="350,214 356,211 362,222 368,219 374,230 380,228"/>
+    </g>
+    <!-- wheel -->
+    <circle cx="474" cy="248" r="14" stroke="currentColor" stroke-width="2" style="fill:var(--panel)"/>
+    <circle cx="474" cy="248" r="3" fill="currentColor"/>
+    <!-- ground force -->
+    <line x1="474" y1="300" x2="474" y2="268" stroke-width="2.5" marker-end="url(#arrT)" style="stroke:var(--tail)"/>
+    <text x="486" y="292" class="s">N ≈ 12–17 % веса</text>
+    <!-- lever arm dimension: hip to wheel -->
+    <line x1="74" y1="140" x2="474" y2="140" stroke="currentColor" stroke-width="1" stroke-dasharray="2 3" opacity=".7"/>
+    <line x1="74" y1="134" x2="74" y2="146" stroke="currentColor"/><line x1="474" y1="134" x2="474" y2="146" stroke="currentColor"/>
+    <text x="400" y="132" text-anchor="middle" class="s">плечо 0,9–1 м до бедра</text>
+    <!-- callouts -->
+    <text x="530" y="182" class="t">пружины сверху</text>
+    <text x="530" y="198" class="s">сворачивают хвост вверх</text>
+    <line x1="526" y1="186" x2="384" y2="222" stroke="currentColor" stroke-width="1" marker-end="url(#arr)"/>
+    <text x="530" y="226" class="t">трос снизу</text>
+    <text x="530" y="242" class="s">плечо 10 → 3 см: распрямляет</text>
+    <line x1="526" y1="230" x2="420" y2="252" stroke="currentColor" stroke-width="1" marker-end="url(#arr)"/>
+    <text x="530" y="56" class="t">упор в каждом шарнире</text>
+    <text x="530" y="72" class="s">прямее прямого не гнётся</text>
+    <line x1="526" y1="62" x2="210" y2="142" stroke="currentColor" stroke-width="1" marker-end="url(#arr)"/>
+  </svg></div>
+  <figcaption>Механизм хвоста в модели. Пружины тянут хвост свернуться, трос с одной лебёдкой распрямляет его до упора. Чем сильнее лебёдка выбирает трос, тем больше веса хвост берёт на себя. Плечо троса у корня 10 см, к кончику 3 см: корневой шарнир несёт самый большой момент. С одинаковым плечом 4,5 см хвост складывался под нагрузкой.</figcaption>
+</figure>
+
+<figure class="fig" id="fig-poly">
+  <div class="scroll"><svg viewBox="0 0 680 270" role="img" aria-label="Вид сверху на опору на одной ноге. С одним колесом опорный треугольник не захватывает среднюю линию, центр масс должен уйти к стопе. С двумя колёсами на оси 44 см опорная область перекрывает среднюю линию">
+    <!-- panel titles -->
+    <text x="170" y="22" text-anchor="middle" class="t">B1: одно колесо</text>
+    <text x="510" y="22" text-anchor="middle" class="t">B2: два колеса, колея 44 см</text>
+    <!-- axis: x forward is UP in these panels; y lateral is horizontal. scale 1 m = 200 px -->
+    <!-- B1 panel -->
+    <g transform="translate(170,0)">
+      <line x1="0" y1="34" x2="0" y2="252" stroke="currentColor" stroke-width="1" stroke-dasharray="3 4" opacity=".5"/>
+      <text x="4" y="46" class="s">ось робота</text>
+      <!-- support hull: stance foot (left foot) + one wheel at centre -->
+      <polygon points="8,48 28,48 28,100 0,236" fill-opacity=".14" stroke-width="1.2" style="fill:var(--tail);stroke:var(--tail)"/>
+      <!-- stance foot -->
+      <rect x="8" y="48" width="20" height="52" rx="3" fill="currentColor" opacity=".55"/>
+      <text x="34" y="74" class="s">опорная стопа</text>
+      <!-- swing foot outline -->
+      <rect x="-28" y="78" width="20" height="52" rx="3" fill="none" stroke="currentColor" stroke-dasharray="3 3" opacity=".6"/>
+      <text x="-34" y="142" text-anchor="end" class="s">переносимая</text>
+      <!-- wheel -->
+      <rect x="-4" y="228" width="8" height="18" rx="2" fill="currentColor"/>
+      <!-- COM marker on centreline -->
+      <circle cx="0" cy="130" r="6" stroke-width="2" style="fill:var(--bg);stroke:var(--bad)"/>
+      <text x="-12" y="176" text-anchor="end" class="s">центр масс на оси</text>
+      <text x="-12" y="190" text-anchor="end" class="s" style="fill:var(--bad)">вне опоры</text>
+    </g>
+    <!-- B2 panel -->
+    <g transform="translate(510,0)">
+      <line x1="0" y1="34" x2="0" y2="252" stroke="currentColor" stroke-width="1" stroke-dasharray="3 4" opacity=".5"/>
+      <polygon points="8,48 28,48 44,237 -44,237" fill-opacity=".14" stroke-width="1.2" style="fill:var(--tail);stroke:var(--tail)"/>
+      <rect x="8" y="48" width="20" height="52" rx="3" fill="currentColor" opacity=".55"/>
+      <rect x="-28" y="78" width="20" height="52" rx="3" fill="none" stroke="currentColor" stroke-dasharray="3 3" opacity=".6"/>
+      <line x1="-44" y1="237" x2="44" y2="237" stroke="currentColor" stroke-width="3"/>
+      <rect x="-48" y="228" width="8" height="18" rx="2" fill="currentColor"/>
+      <rect x="40" y="228" width="8" height="18" rx="2" fill="currentColor"/>
+      <circle cx="0" cy="130" r="6" stroke-width="2" style="fill:var(--bg);stroke:var(--good)"/>
+      <text x="-12" y="176" text-anchor="end" class="s">центр масс на оси</text>
+      <text x="-12" y="190" text-anchor="end" class="s" style="fill:var(--good)">внутри опоры</text>
+      <text x="0" y="262" text-anchor="middle" class="s">ось колёс 44 см</text>
+    </g>
+  </svg></div>
+  <figcaption>Вид сверху, вперёд — вверх, одна нога в воздухе. Опорная область — выпуклая оболочка опорной стопы и точек касания хвоста. С одним колесом на оси робота хвост ничего не даёт вбок: центр масс всё равно должен качаться к стопе, как у двуногого. Колёса на оси 44 см захватывают среднюю линию, и раскачка почти не нужна, если хвост несёт достаточно веса.</figcaption>
+</figure>
+
+</section>
+
+<section class="wide">
+  <h2>Задержка реакции</h2>
+  <p class="muted" style="max-width:var(--col)">Восемь шагов по ровному полу; во втором ряду каждого варианта — толчок вперёд 12 Н·с на третьем шаге и вбок 10 Н·с на пятом. Для каждой задержки брался лучший из трёх коэффициентов стабилизатора, так что каждый вариант сравнивается в своей лучшей настройке.</p>
+  <div class="panel chart" id="ch-lat"></div>
+</section>
+
+<section class="wide">
+  <h2>Сильнее какого толчка робот падает</h2>
+  <p class="muted" style="max-width:var(--col)">Один толчок 0,2 с в середине ходьбы. Проверялись импульсы 10–60 Н·с; 60 Н·с примерно равны сильному толчку взрослого человека: робот получает 0,85 м/с. Показан наибольший импульс, при котором робот устоял и при всех меньших тоже.</p>
+  <div class="chips" role="group" aria-label="Задержка серв" id="push-lat"></div>
+  <div class="panel chart" id="ch-push"></div>
+</section>
+
+<section class="wide">
+  <h2>Какие моменты нужны в суставах</h2>
+  <p class="muted" style="max-width:var(--col)">Ходьба с обоими толчками на хороших сервах (задержка 5 мс, полный момент). Пиковый момент определяет класс привода, среднеквадратичный — нагрев, то есть длительный момент.</p>
+  <div class="chips" role="group" aria-label="Метрика" id="tq-metric"></div>
+  <div class="panel chart" id="ch-tq"></div>
+  
+<p>Хвост перераспределяет нагрузку, а не снижает её везде. По среднеквадратичному моменту колено разгружается
+на треть или вдвое, бедро вбок — в 1,3–2,7 раза. Бедро вперёд нагружается в 2–3 раза сильнее: хвост давит на таз снизу
+в 0,9–1 м позади тазобедренных суставов, и этот момент через бёдра передаётся ногам. Каждые 100 Н на хвосте
+дают бёдрам около 90 Н·м. Сумма среднеквадратичных моментов по пяти суставам у двуногого 158 Н·м,
+у вариантов с хвостом 130–142 Н·м.</p>
+<p>Пиковые значения у робота с хвостом местами выше. Это короткие всплески при толчках и при выпуске хвоста;
+сколько момента действительно нужно, показывает следующий раздел.</p>
+
+</section>
+
+<section>
+  <h2>Насколько можно урезать сервы</h2>
+  
+<p>Ниже наборы предельных моментов, с которыми робот прошёл ходьбу с двумя толчками. Все пять суставов ограничены
+одновременно, толчки давались в трёх разных фазах шага, задержка 5 мс. Двуногий в третьей фазе падает при любом моменте,
+поэтому для него взяты две фазы.</p>
+<div class="tbl"><table>
+  <thead><tr><th>Вариант</th><th class="n">бедро вбок</th><th class="n">бедро вперёд</th><th class="n">колено</th>
+  <th class="n">голеностоп вперёд</th><th class="n">голеностоп вбок</th><th class="n">сумма, Н·м</th></tr></thead>
+  <tbody><tr><td>A — двуногий</td><td class="n">75</td><td class="n">60</td><td class="n">125</td><td class="n">90</td><td class="n">25</td><td class="n"><b>375</b></td></tr><tr><td>B1 — 1 колесо, ЦМ −10 см</td><td class="n">30</td><td class="n">90</td><td class="n">90</td><td class="n">35</td><td class="n">15</td><td class="n"><b>260</b></td></tr><tr><td>B2 — 2 колеса, ЦМ −10 см</td><td class="n">40</td><td class="n">110</td><td class="n">90</td><td class="n">35</td><td class="n">25</td><td class="n"><b>300</b></td></tr><tr><td>B2 — 2 колеса, ЦМ −15 см</td><td class="n">30</td><td class="n">130</td><td class="n">90</td><td class="n">35</td><td class="n">15</td><td class="n"><b>300</b></td></tr></tbody>
+</table></div>
+<p>Скорость не ограничивала ни один вариант: при 0,31 м/с все прошли даже с предельной скоростью серв 2 рад/с
+(в 10 раз меньше исходных 20 рад/с). Значит, при такой ходьбе годятся медленные приводы с большим передаточным числом,
+например волновые на 4–5 рад/с.</p>
+
+</section>
+
+<section>
+  <h2>Можно ли убрать часть серв</h2>
+  
+<p>Проверялся голеностоп вбок без сервы: пружина 150 Н·м/рад и демпфер вместо привода, минус 2 сервы на робота.</p>
+<ul class="plain">
+  <li><b>Двуногий</b> с такими голеностопами не прошёл ни одного прогона, даже без толчков и с задержкой 5 мс.</li>
+  <li><b>С хвостом</b> (одно колесо и центр масс на 10 см позади, или два колеса и 15 см) робот прошёл все прогоны
+  без толчков при любой задержке до 80 мс. С толчками — только в отдельных случаях.</li>
+</ul>
+<p>Итог: хвост позволяет убрать сервы голеностопа вбок для ходьбы по ровному полу, но для робота, которого будут толкать,
+их лучше оставить. Жёсткость пружины специально не подбиралась — это следующий шаг.</p>
+
+</section>
+
+<section>
+  <h2>Во что это обходится</h2>
+  
+<p>Подбор по реальному прайсу: для каждого сустава берётся самый дешёвый привод, у которого пиковый момент,
+длительный момент и скорость покрывают потребность с запасом 25 %. Цены розничные, октябрь–ноябрь 2026 года.</p>
+<div class="tbl"><table>
+  <thead><tr><th>Сустав</th><th>A — двуногий</th><th>B1 — 1 колесо, ЦМ −10 см</th><th>B2 — 2 колеса, ЦМ −10 см</th><th>B2 — 2 колеса, ЦМ −15 см</th></tr></thead>
+  <tbody><tr><td>бедро вбок</td><td>MyActuator X8-P20-120<br><span class="muted">$645 · нужно 75 Н·м</span></td><td>RobStride 04<br><span class="muted">$307 · нужно 30 Н·м</span></td><td>RobStride 03<br><span class="muted">$235 · нужно 40 Н·м</span></td><td>RobStride 03<br><span class="muted">$235 · нужно 30 Н·м</span></td></tr><tr><td>бедро вперёд</td><td>RobStride 04<br><span class="muted">$307 · нужно 60 Н·м</span></td><td>Leadshine HJ2-110 (harmonic)<br><span class="muted">$859 · нужно 90 Н·м</span></td><td>Leadshine HJ2-110 (harmonic)<br><span class="muted">$859 · нужно 110 Н·м</span></td><td>Leadshine HJ2-110 (harmonic)<br><span class="muted">$859 · нужно 130 Н·м</span></td></tr><tr><td>колено</td><td>Leadshine HJ2-110 (harmonic)<br><span class="muted">$859 · нужно 125 Н·м</span></td><td>Leadshine HJ2-110 (harmonic)<br><span class="muted">$859 · нужно 90 Н·м</span></td><td>MyActuator X12-P20-320<br><span class="muted">$1 370 · нужно 90 Н·м</span></td><td>MyActuator X8-P20-120<br><span class="muted">$645 · нужно 90 Н·м</span></td></tr><tr><td>голеностоп вперёд</td><td>RobStride 04<br><span class="muted">$307 · нужно 90 Н·м</span></td><td>RobStride 03<br><span class="muted">$235 · нужно 35 Н·м</span></td><td>RobStride 03<br><span class="muted">$235 · нужно 35 Н·м</span></td><td>RobStride 04<br><span class="muted">$307 · нужно 35 Н·м</span></td></tr><tr><td>голеностоп вбок</td><td>RobStride 03<br><span class="muted">$235 · нужно 25 Н·м</span></td><td>RobStride 03<br><span class="muted">$235 · нужно 15 Н·м</span></td><td>RobStride 03<br><span class="muted">$235 · нужно 25 Н·м</span></td><td>RobStride 03<br><span class="muted">$235 · нужно 15 Н·м</span></td></tr></tbody>
+  <tfoot><tr><td><b>Приводы двух ног</b></td><td><b>$4 706</b></td><td><b>$4 990</b></td><td><b>$5 868</b></td><td><b>$4 562</b></td></tr></tfoot>
+</table></div>
+<p>К вариантам с хвостом добавляется лебёдка на 2–3 кН с датчиком натяжения. Линейный привод на 7,1 кН с обратной связью стоит
+около $335; вместе с трубами, шарнирами, пружинами и колёсами хвост обойдётся примерно в $300–600 (оценка).
+Разница между вариантами меньше шага между соседними приводами в прайсе. Хвост не экономит на приводах ног:
+он снимает нагрузку с колен и голеностопов, но добавляет её бёдрам.</p>
+<p class="muted">Приводы в таблице: RobStride 03 (60/20 Н·м, $235), RobStride 04 (120/40 Н·м, $307),
+MyActuator X8-P20-120 (120/43 Н·м, $645), Leadshine HJ2-110 волновой (194/84 Н·м, 4,2 рад/с, $859),
+MyActuator X12-P20-320 (320/85 Н·м, $1090–1647). Через дробь — пиковый и длительный момент.</p>
+
+</section>
+
+<section>
+  <h2>Как строить хвост</h2>
+  
+<div class="design">
+  <div><b>Нагрузка на хвост</b><span>Главный параметр. Центр масс на 15 см позади голеностопов, хвост несёт около 17% веса.
+  Именно это даёт устойчивость к задержке и толчкам. Ширина наконечника вторична: два колеса подняли предел задержки
+  со 100 до 200 мс, а предел толчков не изменился. Дальше 15 см при высоте таза 0,84 м сдвигать нельзя: опорная нога
+  выпрямляется до упора. Чтобы нагрузить хвост сильнее, нужно опустить таз.</span></div>
+  <div><b>Один привод</b><span>Для опоры достаточно: трос, лебёдка и пружины сворачивания. Регулятор нагрузки медленный
+  (постоянная времени 0,3 с), быстрые возмущения гасит упругость троса. Лебёдке нужно 2–3 кН на тросе, 0,1 м/с
+  для выпуска хвоста за 1,5 с и датчик натяжения. Точная серва не нужна: подойдёт мотор-редуктор с барабаном.</span></div>
+  <div><b>Плечо троса</b><span>Переменное: 10 см у корня, 3 см к кончику. С одинаковым плечом 4,5 см корневой шарнир
+  складывался под нагрузкой, колёса откатывались назад, и робот заваливался на спину. Плечо 10 см у корня — это шкив диаметром 20 см
+  или рычаг в основании хвоста, как толстое основание хвоста у кенгуру.</span></div>
+  <div><b>Наконечник</b><span>Колёса, которые свободно катятся вперёд и не скользят вбок. Хвост остаётся на полу при ходьбе,
+  поэтому его не нужно переставлять. Ось с двумя колёсами (колея 44 см) лучше одного колеса. Колёса на жёсткой оси
+  мешают повороту: нужна поворотная вилка, как у мебельного ролика, или подъём хвоста на время поворота.</span></div>
+  <div><b>Обгонная муфта</b><span>Колесо, которое не катится назад, должно было превратить хвост в упор. С тем же
+  регулятором нагрузки робот падал вперёд: заблокированный хвост начинает толкать корпус. Это решаемо, но требует
+  регулятора, который учитывает горизонтальную силу. Без этого муфту ставить не стоит.</span></div>
+  <div><b>Второй привод</b><span>Быстрый мах хвостом для защиты от падения бесполезен. Сам хвост весит 2,6 кг,
+  его момент инерции около 1,4 кг·м² против 65 кг·м² у корпуса относительно стоп, и мах на 1 рад поворачивает корпус
+  примерно на 1°. Полезнее медленный привод качания в корне хвоста. Он поднимает хвост на лестнице, при развороте
+  на месте и при перешагивании, а также переносит точку опоры. Подгиб кончика здесь не моделировался: он нужен, если
+  кончику требуется подстраиваться под уклон или ступеньку.</span></div>
+  <div><b>Бёдра</b><span>Привод бедра вперёд под хвост надо брать мощнее, чем у двуногого. Частично это компенсирует
+  тяжёлый груз позади оси бёдер. Аккумулятор 10 кг на 40 см позади снизил среднеквадратичный момент в бедре
+  с 67 до 42 Н·м, но в колене он вырос с 33 до 45 Н·м.</span></div>
+</div>
+
+</section>
+
+<section>
+  <h2>Чего эта симуляция не показывает</h2>
+  
+<ul class="plain">
+  <li><b>Двуногий не переставляет ногу при толчке.</b> Реальные двуногие роботы спасаются шагом. С таким
+  контроллером разрыв по толчкам уменьшится. По задержке он, скорее всего, останется: шаг тоже требует быстрой реакции.</li>
+  <li><b>Только ровный пол и прямая ходьба</b> со скоростью 0,31 м/с и 0,46 м/с в одном тесте. Повороты, лестницы,
+  пороги и неровный пол не проверялись. Для хвоста на колёсах это главный открытый вопрос.</li>
+  <li><b>Серва идеализирована:</b> нет люфта, сухого трения, нагрева и дискретности датчика угла. Задержка поровну
+  делится на измерение и команду.</li>
+  <li><b>Один прогон на точку</b>, без случайного разброса. Результаты у границы могут переключаться: например, у двуногого
+  толчок вбок 10 Н·с проходит при задержке 40 мс и не проходит при 5 мс.</li>
+  <li><b>Массы человеческие.</b> У реального робота ноги тяжелее из-за приводов, моменты будут больше.</li>
+  <li><b>Цены</b> — розничный снимок на октябрь–ноябрь 2026 года, перед закупкой их надо перепроверить.</li>
+</ul>
+
+</section>
+
+<footer>
+  
+<p>Код и результаты: репозиторий <span class="mono">stilletto/analyzing-by-region</span>, ветка
+<span class="mono">ccr-a09a2ec1-a8a724</span>, папка <span class="mono">robot-tail-sim/</span>.
+Физика — MuJoCo, шаг 1 мс, управление 500 Гц. Около 1300 прогонов ходьбы на 4 ядрах.
+Все прогоны воспроизводятся: <span class="mono">python3 sweeps.py</span>, <span class="mono">extra.py</span>,
+<span class="mono">extra2.py</span>, затем <span class="mono">report/build.py</span>.</p>
+
+</footer>
+</main>
+
+<div class="tip" id="tip" hidden></div>
+<script id="data" type="application/json">{"keys": ["A_biped", "B1_tail_narrow@10cm", "B2_tail_wide@10cm", "B1_tail_narrow@15cm", "B2_tail_wide@15cm"], "short": {"A_biped": "A — двуногий", "B1_tail_narrow@10cm": "B1 — 1 колесо, ЦМ −10 см", "B2_tail_wide@10cm": "B2 — 2 колеса, ЦМ −10 см", "B1_tail_narrow@15cm": "B1 — 1 колесо, ЦМ −15 см", "B2_tail_wide@15cm": "B2 — 2 колеса, ЦМ −15 см"}, "lat_axis": [0.002, 0.01, 0.02, 0.03, 0.04, 0.06, 0.08, 0.1, 0.15, 0.2], "latency": {"A_biped": {"none": [[0.002, true], [0.01, true], [0.02, true], [0.03, true], [0.04, true], [0.06, true], [0.08, true], [0.1, true], [0.15, true], [0.2, true]], "push": [[0.002, true], [0.01, true], [0.02, true], [0.03, true], [0.04, false], [0.06, false], [0.08, false], [0.1, false], [0.15, false], [0.2, false]]}, "B1_tail_narrow@10cm": {"none": [[0.002, true], [0.01, true], [0.02, true], [0.03, true], [0.04, true], [0.06, true], [0.08, true], [0.1, true], [0.15, true], [0.2, true]], "push": [[0.002, true], [0.01, true], [0.02, true], [0.03, true], [0.04, true], [0.06, true], [0.08, true], [0.1, true], [0.15, true], [0.2, false]]}, "B2_tail_wide@10cm": {"none": [[0.002, true], [0.01, true], [0.02, true], [0.03, true], [0.04, true], [0.06, true], [0.08, true], [0.1, false], [0.15, false], [0.2, false]], "push": [[0.002, true], [0.01, true], [0.02, true], [0.03, true], [0.04, true], [0.06, true], [0.08, false], [0.1, false], [0.15, false], [0.2, false]]}, "B1_tail_narrow@15cm": {"none": [[0.002, true], [0.01, true], [0.02, true], [0.03, true], [0.04, true], [0.06, true], [0.08, true], [0.1, true], [0.15, true], [0.2, true]], "push": [[0.002, true], [0.01, true], [0.02, true], [0.03, true], [0.04, true], [0.06, true], [0.08, true], [0.1, true], [0.15, false], [0.2, false]]}, "B2_tail_wide@15cm": {"none": [[0.002, true], [0.01, true], [0.02, true], [0.03, true], [0.04, true], [0.06, true], [0.08, true], [0.1, true], [0.15, true], [0.2, true]], "push": [[0.002, true], [0.01, true], [0.02, true], [0.03, true], [0.04, true], [0.06, true], [0.08, true], [0.1, true], [0.15, true], [0.2, true]]}}, "push_lats": ["5", "40"], "push_max": {"A_biped": {"fwd": {"5": 20, "40": 20}, "back": {"5": 10, "40": 20}, "side": {"5": null, "40": 10}}, "B1_tail_narrow@10cm": {"fwd": {"5": 60, "40": 50}, "back": {"5": 60, "40": 60}, "side": {"5": 10, "40": 10}}, "B2_tail_wide@10cm": {"fwd": {"5": 60, "40": 60}, "back": {"5": 60, "40": 60}, "side": {"5": 10, "40": 10}}, "B1_tail_narrow@15cm": {"fwd": {"5": 60, "40": 50}, "back": {"5": 60, "40": 60}, "side": {"5": 10, "40": 10}}, "B2_tail_wide@15cm": {"fwd": {"5": 60, "40": 50}, "back": {"5": 60, "40": 60}, "side": {"5": 10, "40": 10}}}, "push_xmax": 60, "joints": ["бедро вбок", "бедро вперёд", "колено", "голеностоп вперёд", "голеностоп вбок"], "torque": {"A_biped": {"peak": [72.44769173791788, 68.93732466852916, 156.0723902010437, 89.53294283320146, 34.61264701863435], "rms": [29.64268469916264, 22.48880299573847, 65.6654381877219, 25.68564976546385, 14.264285551579386], "w": [0.5580645921048516, 2.6029908765733816, 2.1942051212321143, 2.390902475359508, 0.487316110044138]}, "B1_tail_narrow@10cm": {"peak": [83.15632468262791, 133.847255950978, 158.57285543493396, 89.85339442803237, 66.17445983232662], "rms": [23.24748077792938, 41.15488927598129, 43.84061582583139, 13.124473579214568, 8.955072416552683], "w": [0.8566596508342116, 2.3062285980125594, 3.0659819010170595, 2.7837296056664087, 1.5752442913103]}, "B2_tail_wide@10cm": {"peak": [63.03674871140542, 130.69129769811727, 202.15709831827513, 135.6348289032481, 76.45614313305407], "rms": [15.458301775464042, 46.747694143954, 42.84749635594116, 16.701735064189478, 12.189573637527834], "w": [0.8124234376918769, 2.5997630093304602, 3.428284630255694, 3.561774446492994, 1.490895120026555]}, "B1_tail_narrow@15cm": {"peak": [67.28028585439912, 160.05607030526127, 140.34810788080762, 180.0, 100.86319618187775], "rms": [20.325173948622087, 52.8077675046151, 32.8970985744349, 20.81420854305867, 7.272072424841417], "w": [0.8339375533362512, 2.0903953905081574, 3.877527539409684, 2.8332975104595413, 2.3959819937789715]}, "B2_tail_wide@15cm": {"peak": [43.391983377322866, 182.99523497938702, 125.95705804007073, 180.0, 96.27683671270768], "rms": [10.932307966390795, 66.55708457993003, 33.45792108901806, 19.57546577198688, 11.1825022591451], "w": [0.45106596153596235, 2.074962357901362, 4.036842236638806, 2.849752385087875, 1.9228164480795935]}}}</script>
+<script>
+(function () {
+  const D = JSON.parse(document.getElementById('data').textContent);
+  const KEYS = D.keys;
+  const NAME = D.short;
+  const SER = {}; KEYS.forEach((k, i) => SER[k] = 'var(--s' + (i + 1) + ')');
+  const tip = document.getElementById('tip');
+  function showTip(e, html) { tip.innerHTML = html; tip.hidden = false; moveTip(e); }
+  function moveTip(e) {
+    const x = Math.min(e.clientX + 14, window.innerWidth - tip.offsetWidth - 8);
+    const y = Math.max(8, e.clientY - tip.offsetHeight - 12);
+    tip.style.left = x + 'px'; tip.style.top = y + 'px';
+  }
+  function hideTip() { tip.hidden = true; }
+  const NS = 'http://www.w3.org/2000/svg';
+  function el(tag, attrs, parent) {
+    const n = document.createElementNS(NS, tag);
+    for (const k in attrs) n.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(n);
+    return n;
+  }
+  function txt(parent, x, y, s, cls, anchor, extra) {
+    const t = el('text', Object.assign({ x, y, 'text-anchor': anchor || 'start', class: cls || '' }, extra || {}), parent);
+    t.textContent = s; return t;
+  }
+  function svgRoot(host, W, H, label) {
+    host.innerHTML = '';
+    const s = el('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': label }, null);
+    s.style.width = '100%'; s.style.height = 'auto'; s.style.display = 'block'; s.style.color = 'var(--fg)';
+    host.appendChild(s); return s;
+  }
+  function hover(node, html) {
+    node.addEventListener('pointerenter', e => showTip(e, html));
+    node.addEventListener('pointermove', moveTip);
+    node.addEventListener('pointerleave', hideTip);
+    node.setAttribute('tabindex', '0');
+    node.addEventListener('focus', () => { const r = node.getBoundingClientRect(); showTip({ clientX: r.right, clientY: r.top }, html); });
+    node.addEventListener('blur', hideTip);
+  }
+  function legend(host, keys) {
+    const L = document.createElement('div'); L.className = 'legend';
+    keys.forEach(k => { const s = document.createElement('span'); s.innerHTML = `<i style="background:${SER[k]}"></i>${NAME[k]}`; L.appendChild(s); });
+    host.appendChild(L);
+  }
+
+  // ---------- latency grid ----------
+  (function () {
+    const host = document.getElementById('ch-lat');
+    const lats = D.lat_axis; const rowsPer = [['none', 'без толчков'], ['push', 'с толчками']];
+    const W = 920, left = 330, top = 34, rowH = 26, gap = 10, colW = (W - left - 10) / lats.length;
+    const H = top + KEYS.length * (rowH * 2 + gap) + 8;
+    const s = svgRoot(host, W, H, 'Устоял ли робот при каждой задержке серв, по вариантам');
+    txt(s, left - 10, 18, 'задержка, мс →', 's', 'end', { fill: 'var(--muted)', style: 'font-size:12px' });
+    lats.forEach((L, j) => txt(s, left + colW * (j + .5), 18, String(Math.round(L * 1000)), 's', 'middle', { style: 'font-size:12px;font-variant-numeric:tabular-nums' }));
+    KEYS.forEach((k, i) => {
+      const y0 = top + i * (rowH * 2 + gap);
+      el('rect', { x: 0, y: y0, width: 4, height: rowH * 2 - 4, rx: 2, style: `fill:${SER[k]}` }, s);
+      txt(s, 12, y0 + 16, NAME[k], 't', 'start', { style: 'font-size:13px' });
+      rowsPer.forEach(([p, pl], r) => {
+        const y = y0 + r * rowH;
+        txt(s, left - 10, y + 16, pl, 's', 'end', { style: 'font-size:12px;fill:var(--muted)' });
+        const row = (D.latency[k] || {})[p] || [];
+        const m = {}; row.forEach(([x, ok]) => m[x.toFixed(3)] = ok);
+        lats.forEach((L, j) => {
+          const ok = m[L.toFixed(3)];
+          const cx = left + colW * (j + .5), cy = y + 11;
+          const g = el('g', {}, s);
+          el('rect', { x: cx - colW / 2 + 1, y: y, width: colW - 2, height: rowH - 4, fill: 'transparent' }, g);
+          if (ok === undefined) { txt(g, cx, cy + 4, '·', 's', 'middle'); return; }
+          if (ok) { el('circle', { cx, cy, r: 7, style: 'fill:var(--good)' }, g); el('path', { d: `M${cx - 3.5} ${cy} l2.5 2.6 l4.5 -5`, fill: 'none', stroke: '#fff', 'stroke-width': 1.8, 'stroke-linecap': 'round' }, g); }
+          else { el('circle', { cx, cy, r: 6.5, fill: 'none', style: 'stroke:var(--bad)', 'stroke-width': 1.8 }, g); el('path', { d: `M${cx - 3} ${cy - 3} l6 6 M${cx + 3} ${cy - 3} l-6 6`, style: 'stroke:var(--bad)', 'stroke-width': 1.6, 'stroke-linecap': 'round' }, g); }
+          hover(g, `<b>${NAME[k]}</b><br>${pl}, задержка ${Math.round(L * 1000)} мс: ${ok ? 'устоял' : 'упал'}`);
+        });
+      });
+    });
+    const L = document.createElement('div'); L.className = 'legend';
+    L.innerHTML = '<span><svg width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6" style="fill:var(--good)"/></svg>прошёл 8 шагов</span><span><svg width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5.5" fill="none" style="stroke:var(--bad)" stroke-width="1.8"/></svg>упал</span>';
+    host.appendChild(L);
+  })();
+
+  // ---------- push bars ----------
+  (function () {
+    const host = document.getElementById('ch-push');
+    const chipsHost = document.getElementById('push-lat');
+    const lats = D.push_lats; let cur = lats[lats.length - 1];
+    const dirs = [['fwd', 'вперёд'], ['back', 'назад'], ['side', 'вбок']];
+    function draw() {
+      const W = 920, left = 92, right = 70, top = 10, barH = 15, bgap = 3, ggap = 18;
+      const gh = KEYS.length * (barH + bgap);
+      const H = top + dirs.length * (gh + ggap) + 26;
+      const s = svgRoot(host, W, H, 'Наибольший выдержанный импульс толчка по направлениям и вариантам');
+      const xmax = D.push_xmax; const sx = v => left + (W - left - right) * v / xmax;
+      [0, 10, 20, 30, 40, 50, 60].forEach(v => {
+        el('line', { x1: sx(v), x2: sx(v), y1: top, y2: H - 22, style: 'stroke:var(--grid)', 'stroke-width': 1 }, s);
+        txt(s, sx(v), H - 6, v + (v === 60 ? ' Н·с' : ''), 's', 'middle', { style: 'font-size:11.5px;fill:var(--muted)' });
+      });
+      dirs.forEach(([dk, dl], gi) => {
+        const y0 = top + gi * (gh + ggap);
+        txt(s, 0, y0 + gh / 2 + 4, dl, 't', 'start');
+        KEYS.forEach((k, i) => {
+          const v = (((D.push_max[k] || {})[dk]) || {})[cur];
+          const y = y0 + i * (barH + bgap);
+          const val = v == null ? 0 : v;
+          const capped = v != null && v >= D.push_xmax;
+          const g = el('g', {}, s);
+          el('rect', { x: left, y, width: Math.max(0, sx(val) - left), height: barH, rx: 3, style: `fill:${SER[k]}` }, g);
+          txt(g, sx(val) + 6, y + barH - 3, v == null ? '< 10' : (capped ? '≥ ' + v : String(v)), 's', 'start', { style: 'font-size:11.5px;font-variant-numeric:tabular-nums' });
+          el('rect', { x: left, y: y - 1, width: W - left - right, height: barH + 2, fill: 'transparent' }, g);
+          hover(g, `<b>${NAME[k]}</b><br>толчок ${dl}, задержка ${cur} мс:<br>${v == null ? 'падает уже при 10 Н·с' : (capped ? 'выдержал все до ' + v + ' Н·с (больше не проверялось)' : 'выдержал до ' + v + ' Н·с')}`);
+        });
+      });
+      legend(host, KEYS);
+    }
+    lats.forEach(L => {
+      const b = document.createElement('button'); b.className = 'chip'; b.type = 'button'; b.id = 'pl-' + L;
+      b.textContent = 'задержка ' + L + ' мс'; b.setAttribute('aria-pressed', String(L === cur));
+      b.onclick = () => { cur = L; chipsHost.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', String(c === b))); draw(); };
+      chipsHost.appendChild(b);
+    });
+    draw();
+  })();
+
+  // ---------- torque bars ----------
+  (function () {
+    const host = document.getElementById('ch-tq');
+    const chipsHost = document.getElementById('tq-metric');
+    const J = D.joints; let metric = 'peak';
+    function draw() {
+      const W = 920, left = 150, right = 60, top = 8, barH = 13, bgap = 3, ggap = 16;
+      const gh = KEYS.length * (barH + bgap);
+      const H = top + J.length * (gh + ggap) + 26;
+      const s = svgRoot(host, W, H, 'Моменты в суставах ноги по вариантам');
+      const vals = KEYS.flatMap(k => (D.torque[k] || {})[metric] || []);
+      const xmax = Math.ceil(Math.max(...vals) / 50) * 50;
+      const sx = v => left + (W - left - right) * v / xmax;
+      for (let v = 0; v <= xmax; v += 50) {
+        el('line', { x1: sx(v), x2: sx(v), y1: top, y2: H - 22, style: 'stroke:var(--grid)', 'stroke-width': 1 }, s);
+        txt(s, sx(v), H - 6, v + (v === xmax ? ' Н·м' : ''), 's', 'middle', { style: 'font-size:11.5px;fill:var(--muted)' });
+      }
+      J.forEach((jn, gi) => {
+        const y0 = top + gi * (gh + ggap);
+        txt(s, 0, y0 + gh / 2 + 4, jn, 't', 'start', { style: 'font-size:12.5px' });
+        KEYS.forEach((k, i) => {
+          const v = ((D.torque[k] || {})[metric] || [])[gi];
+          if (v == null) return;
+          const y = y0 + i * (barH + bgap);
+          const g = el('g', {}, s);
+          el('rect', { x: left, y, width: Math.max(0, sx(v) - left), height: barH, rx: 3, style: `fill:${SER[k]}` }, g);
+          txt(g, sx(v) + 6, y + barH - 2, Math.round(v), 's', 'start', { style: 'font-size:11px;font-variant-numeric:tabular-nums' });
+          el('rect', { x: left, y: y - 1, width: W - left - right, height: barH + 2, fill: 'transparent' }, g);
+          hover(g, `<b>${NAME[k]}</b><br>${jn}: ${metric === 'peak' ? 'пик' : 'RMS'} ${Math.round(v)} Н·м`);
+        });
+      });
+      legend(host, KEYS);
+    }
+    [['peak', 'пиковый момент'], ['rms', 'среднеквадратичный']].forEach(([m, l]) => {
+      const b = document.createElement('button'); b.className = 'chip'; b.type = 'button'; b.id = 'tq-' + m;
+      b.textContent = l; b.setAttribute('aria-pressed', String(m === metric));
+      b.onclick = () => { metric = m; chipsHost.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', String(c === b))); draw(); };
+      chipsHost.appendChild(b);
+    });
+    draw();
+  })();
+})();
+</script>
